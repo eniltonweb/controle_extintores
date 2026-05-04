@@ -1,43 +1,69 @@
-const CACHE_NAME = 'controle-extintores-cache-v1';
+const CACHE_NAME = 'controle-extintores-cache-v2';
 const urlsToCache = [
-    '/formulario_inspecao.php',  // Cacheie o formulário de inspeção
-    '/index.php',                // Página inicial
-    '/css/styles.css',           // Seu arquivo CSS
-    '/js/IndexedDB.js',          // Seu arquivo IndexedDB, se necessário
-    '/js/service-worker.js',     // Este próprio arquivo Service Worker
-    // Adicione outros arquivos essenciais que precisam ser cacheados
+    '/index.php',
+    '/login.php',
+    '/formulario_inspecao.php',
+    '/css/styles.css',
+    '/styles.css',
+    '/js/app.js',
+    '/js/IndexedDB.js',
+    '/js/service-worker.js'
 ];
 
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                return cache.addAll(urlsToCache);
-            })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
-});
-
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Retorna o recurso do cache, ou faz o fetch se não estiver no cache
-                return response || fetch(event.request);
-            })
-    );
+    self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (!cacheWhitelist.includes(cacheName)) {
-                        return caches.delete(cacheName);
-                    }
+        caches.keys().then(cacheNames =>
+            Promise.all(
+                cacheNames
+                    .filter(cacheName => cacheName !== CACHE_NAME)
+                    .map(cacheName => caches.delete(cacheName))
+            )
+        )
+    );
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', event => {
+    if (event.request.method !== 'GET') {
+        return;
+    }
+
+    const isNavigation = event.request.mode === 'navigate';
+
+    if (isNavigation) {
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+                    return response;
                 })
-            );
+                .catch(() => caches.match(event.request).then(resp => resp || caches.match('/index.php')))
+        );
+        return;
+    }
+
+    event.respondWith(
+        caches.match(event.request).then(cached => {
+            if (cached) {
+                return cached;
+            }
+            return fetch(event.request)
+                .then(response => {
+                    if (!response || response.status !== 200 || response.type !== 'basic') {
+                        return response;
+                    }
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+                    return response;
+                });
         })
     );
 });

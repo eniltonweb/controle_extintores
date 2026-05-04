@@ -16,7 +16,7 @@ function isAuthenticated() {
 function authenticateUser($email, $password) {
     global $conn;
 
-    $sql = "SELECT id, password, level FROM users WHERE email = ?";
+    $sql = "SELECT id, password, level FROM usuarios WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s', $email);
     $stmt->execute();

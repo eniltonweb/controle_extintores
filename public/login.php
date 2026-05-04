@@ -1,10 +1,13 @@
 <?php
 session_start();
-session_regenerate_id(true);
 
 include '../config/db_conexao.php';
+include 'includes/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Token de segurança inválido. Atualize a página e tente novamente.';
+    } else {
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
     $password = $_POST['password'];
 
@@ -18,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
+            session_regenerate_id(true);
             // Armazenar informações do usuário na sessão
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_level'] = $user['nivel_acesso'];
@@ -33,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $stmt->close();
+    }
 }
 
 $conn->close();
@@ -88,6 +93,7 @@ $conn->close();
         <img src="img/michelin_logo.png" alt="Logo">
         <h2 class="text-center">ENTRAR NO SISTEMA</h2>
         <form method="POST" action="login.php">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
             <div class="form-group">
                 <label for="username">Usuário:</label>
                 <input type="text" class="form-control" id="username" name="username" required>

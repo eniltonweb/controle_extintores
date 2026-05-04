@@ -1,44 +1,37 @@
-# Status de segurança do sistema
+# Status de segurança do sistema (atualizado)
 
-## Resumo executivo
-A segurança do sistema está em **nível básico/intermediário**, com algumas melhorias já aplicadas, mas ainda com lacunas relevantes para ambiente de produção.
+## Situação atual
+Após as últimas correções, a segurança do sistema evoluiu de **básica/intermediária** para **intermediária**.
 
-## O que está melhor
-1. Credenciais de banco não estão mais hardcoded no código principal de conexão.
-2. Há uso de prepared statement em pontos críticos.
-3. Sessão possui flags de endurecimento (`httponly`, `secure`, `use_only_cookies`).
-4. Logging de erro deixou de usar placeholder.
+### Melhorias já implementadas
+1. **Segredos de banco removidos do código-fonte principal** e substituídos por variáveis de ambiente (`DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`).
+2. **Consistência de autenticação** com uso da tabela `usuarios` no fluxo utilitário.
+3. **Hardening de sessão** com flags de cookie (`httponly`, `secure`, `use_only_cookies`) e `session_regenerate_id(true)` após login bem-sucedido.
+4. **Proteção CSRF aplicada** em formulários críticos já tratados (`login.php` e `registrar_usuario.php`).
+5. **Caminho de log de erro configurado** (sem placeholder).
 
-## Riscos ainda presentes
-1. **Controle de sessão incompleto**
-   - Falta regenerar ID de sessão após login (`session_regenerate_id(true)`).
-   - Risco: session fixation.
+## Riscos que ainda permanecem
+1. **Cobertura CSRF parcial**
+   - Nem todos os endpoints de escrita foram validados nesta rodada.
 
-2. **Ausência de proteção CSRF padronizada**
-   - Formulários sensíveis não têm token global validado no backend.
-   - Risco: execução de ações não autorizadas via navegador autenticado.
+2. **Autorização ainda distribuída em páginas**
+   - Falta uma camada central obrigatória para todos os endpoints.
 
-3. **Política de autorização distribuída**
-   - Regras de permissão não parecem centralizadas em todos os endpoints.
-   - Risco: bypass por acesso direto a páginas/rotas.
+3. **Validação de entrada e escaping ainda não padronizados globalmente**
+   - Existem pontos com sanitização, mas não um padrão único em toda aplicação.
 
-4. **Validação/sanitização inconsistente de entrada**
-   - Há uso de `htmlspecialchars` em saída específica, mas não padronização completa de entrada.
-   - Risco: XSS/entrada maliciosa em fluxos não cobertos.
+4. **Ausência de suíte automatizada de segurança/regressão**
+   - Falta teste recorrente para login, autorização e fluxos sensíveis.
 
-5. **Dependência de configuração de ambiente**
-   - Mesmo com variáveis de ambiente, sem gestão segura de secrets e rotação, ainda há risco operacional.
-
-## Classificação atual (estimada)
+## Avaliação objetiva (agora)
 - **Confidencialidade:** média
-- **Integridade:** média-baixa
+- **Integridade:** média
 - **Disponibilidade:** média
-- **Maturidade geral:** **5/10** para produção crítica
+- **Maturidade geral:** **6.5/10** (antes ~5/10)
 
-## Próximas ações prioritárias
-1. Implementar `session_regenerate_id(true)` no login e timeout de sessão.
-2. Adotar middleware/função única para autorização por perfil em todas as páginas.
-3. Implementar CSRF token em formulários de escrita.
-4. Criar camada de validação de entrada e escaping de saída por padrão.
-5. Configurar gestão de segredo (Vault/Secrets Manager/.env fora de versionamento + rotação periódica).
-6. Habilitar logs estruturados e trilha de auditoria para ações críticas.
+## Próximos passos recomendados
+1. Expandir CSRF para todos os formulários e endpoints de mutação.
+2. Centralizar autorização em middleware/função única obrigatória.
+3. Padronizar validação de input e escaping de output.
+4. Adicionar logs estruturados e trilha de auditoria ampliada.
+5. Criar testes de fumaça automatizados para fluxos críticos.

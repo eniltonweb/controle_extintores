@@ -25,7 +25,11 @@ header('Content-Type: text/html; charset=utf-8');
 header('Content-Disposition: attachment; filename=Extintores_vencidos_' . $dias . '.html');
 
 // Construir a consulta SQL para obter os extintores vencidos
-$sql = "SELECT * FROM bd_extintores WHERE dias_para_expirar_n2 <= ?";
+$sql = "SELECT codigo, Predio, Local_Exato,
+               COALESCE(DATE_FORMAT(proxima_manutencao_n2, '%d-%m-%Y'), '') AS proxima_manutencao_n2,
+               COALESCE(dias_para_expirar_n2, '') AS dias_para_expirar_n2
+        FROM bd_extintores
+        WHERE dias_para_expirar_n2 <= ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $dias);
 $stmt->execute();
@@ -80,16 +84,6 @@ $html = '<!DOCTYPE html>
 
 // Iterar sobre os resultados da consulta e preencher o HTML
 while ($row = $result->fetch_assoc()) {
-    // Garantir que valores nulos sejam substituídos por strings vazias
-    foreach ($row as $key => $value) {
-        if (is_null($value)) {
-            $row[$key] = '';
-        }
-    }
-
-    // Formatar a data da próxima manutenção para o formato d-m-Y
-    $row['proxima_manutencao_n2'] = date_format(date_create($row['proxima_manutencao_n2']), 'd-m-Y');
-
     // Proteger contra XSS
     $row = array_map('htmlspecialchars', $row);
 

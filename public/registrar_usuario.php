@@ -2,6 +2,7 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php'; // Certifique-se de que este arquivo existe e tem a função auditoria
+include 'includes/functions.php';
 
 // Verificar se o usuário está logado e se tem permissão para acessar esta página
 if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
@@ -12,6 +13,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $message = 'Token de segurança inválido. Recarregue a página e tente novamente.';
+    } else {
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $user_level = filter_input(INPUT_POST, 'user_level', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -44,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     $stmt_check->close();
+    }
 }
 
 // Consultar todos os usuários registrados
@@ -186,6 +191,7 @@ $conn->close();
     <?php endif; ?>
 
     <form method="POST" action="registrar_usuario.php">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <div class="form-group">
             <label for="username">Usuário:</label>
             <input type="text" class="form-control" id="username" name="username" required>

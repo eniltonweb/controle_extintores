@@ -9,13 +9,6 @@ function sanitizeInput($input) {
 }
 
 /**
- * Valida o código de barras do extintor
- */
-function validateBarcode($barcode) {
-    return preg_match('/^[a-zA-Z0-9\-]+$/', $barcode);
-}
-
-/**
  * Obtém os detalhes do extintor do banco de dados
  */
 function getExtintorDetails($conn, $codigo) {

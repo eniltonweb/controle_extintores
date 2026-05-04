@@ -2,6 +2,7 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include 'includes/functions.php';
 
 // Verificar se o usuário está logado e se tem permissão para acessar esta página
 if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
@@ -10,6 +11,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $message = 'Token de segurança inválido. Recarregue a página e tente novamente.';
+    } else {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     $nova_senha = password_hash($_POST['nova_senha'], PASSWORD_DEFAULT);
 
@@ -24,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message = "Erro ao resetar senha: " . $stmt->error;
     }
     $stmt->close();
+    }
 }
 
 if (isset($_GET['id'])) {
@@ -58,6 +63,7 @@ if (isset($_GET['id'])) {
 
         <form method="POST" action="resetar_senha.php" class="mb-4">
             <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
             <div class="form-group">
                 <label for="nova_senha">Nova Senha:</label>
                 <input type="password" class="form-control" id="nova_senha" name="nova_senha" required>

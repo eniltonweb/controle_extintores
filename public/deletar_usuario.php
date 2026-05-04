@@ -2,6 +2,7 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include 'includes/functions.php';
 
 // Verificar se o usuário está logado e se tem permissão para acessar esta página
 if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
@@ -9,8 +10,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
     exit();
 }
 
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        die('Token de segurança inválido.');
+    }
+
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) {
+        die('ID do usuário não fornecido.');
+    }
 
     // Obter o nome do usuário antes de deletar
     $sql_user = "SELECT username FROM usuarios WHERE id = ?";
@@ -65,7 +73,8 @@ if (isset($_GET['id'])) {
 
     $stmt_user->close();
 } else {
-    echo "ID do usuário não fornecido.";
+    header('Location: registrar_usuario.php');
+    exit();
 }
 
 $conn->close();

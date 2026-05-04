@@ -20,7 +20,7 @@ function registrar_auditoria($conn, $user_id, $action, $details) {
 header('Content-Type: text/html; charset=utf-8');
 header('Content-Disposition: attachment; filename=historico_inspecao_' . date('Y-m-d_H:i:s') . '.html');
 
-// Construir consulta SQL
+// Construir consulta SQL (Adicionado a coluna bd_extintores.foto)
 $sql = "
     SELECT 
         bd_extintores.codigo AS extintor_codigo, 
@@ -36,7 +36,8 @@ $sql = "
         bd_extintores.lacre, 
         bd_extintores.pressao_manometro,
         bd_extintores.anel_identificacao, 
-        bd_extintores.pesagem_co2_semestral
+        bd_extintores.pesagem_co2_semestral,
+        bd_extintores.foto AS foto_inspecao
     FROM 
         bd_extintores
     LEFT JOIN 
@@ -63,9 +64,13 @@ $html = '<!DOCTYPE html>
         .table th {
             background-color: #0056b3;
             color: white;
+            vertical-align: middle;
         }
         .table tbody tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+        .table td {
+            vertical-align: middle;
         }
         .header-img {
             width: 300px;
@@ -77,13 +82,13 @@ $html = '<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <div class="text-center mb-4">
             <img src="http://www.enilton.com.br/img/michelin_logo2.png" alt="Michelin Logo" class="header-img">
             <h2 class="text-center">Relatório Inspeção de Nível 1</h2>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped text-center">
                 <thead>
                     <tr>
                         <th>Código do Extintor</th>
@@ -100,6 +105,7 @@ $html = '<!DOCTYPE html>
                         <th>Pressão do Mamometro</th>
                         <th>Anel de Identificação</th>
                         <th>Pesagem Semestral Co2</th>
+                        <th>Foto da Inspeção</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -110,6 +116,15 @@ while ($row = $result->fetch_assoc()) {
     // Formatando a data para d-m-Y
     $row['data_inspecao'] = date_format(date_create($row['data_inspecao']), 'd-m-Y');
 	
+    // Lógica para exibir a foto
+    $foto_html = 'Sem Foto';
+    if (!empty($row['foto_inspecao'])) {
+        $foto_url = 'http://www.enilton.com.br/uploads/' . $row['foto_inspecao'];
+        $foto_html = '<a href="' . $foto_url . '" target="_blank">
+                        <img src="' . $foto_url . '" style="max-width: 80px; max-height: 80px; border-radius: 4px; border: 1px solid #ccc;">
+                      </a>';
+    }
+
     $html .= '<tr>
                 <td>' . $row['extintor_codigo'] . '</td>
                 <td>' . $row['local_exato'] . '</td>
@@ -125,6 +140,7 @@ while ($row = $result->fetch_assoc()) {
                 <td>' . $row['pressao_manometro'] . '</td>
 				<td>' . $row['anel_identificacao'] . '</td>
 				<td>' . $row['pesagem_co2_semestral'] . '</td>
+                <td>' . $foto_html . '</td>
             </tr>';
 }
 
@@ -138,6 +154,7 @@ $html .= '</tbody>
 </html>';
 
 echo $html;
+
 // Registrar a auditoria
 $user_id = $_SESSION['user_id'];
 $action = 'Exportação de inspeções';

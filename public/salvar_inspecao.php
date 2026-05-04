@@ -4,7 +4,6 @@ session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php'; // Incluindo o arquivo que contém a função auditoria
 
-
 if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'bombeiro') {
     header('Location: index.php');
     exit();
@@ -42,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $anel_identificacao = filter_input(INPUT_POST, 'anel_identificacao', FILTER_SANITIZE_SPECIAL_CHARS);
     $pesagem_co2_semestral = filter_input(INPUT_POST, 'pesagem_co2_semestral', FILTER_SANITIZE_SPECIAL_CHARS);
     $comentarios = filter_input(INPUT_POST, 'comentarios', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $foto = $_FILES['foto'];
-
-    // Lidar com o upload de fotos
+    
+    // Lidar com o upload de fotos (Modificado para gerar nome único e evitar sobrescrita)
     $foto_nome = null;
-    if ($foto && $foto['error'] === UPLOAD_ERR_OK) {
-        $foto_nome = basename($foto['name']);
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $foto_nome = uniqid() . '_' . time() . '.' . $extensao; 
         $foto_destino = "../uploads/" . $foto_nome;
-        move_uploaded_file($foto['tmp_name'], $foto_destino);
+        move_uploaded_file($_FILES['foto']['tmp_name'], $foto_destino);
     }
 
     // Atualizar inspeção no banco de dados
@@ -85,4 +84,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conn->close();
 }
 ?>
-

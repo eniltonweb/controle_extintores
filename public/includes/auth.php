@@ -42,13 +42,6 @@ function hasPermission($required_level) {
 
 
 /**
- * Gera um hash seguro para a senha
- */
-function hashPassword($password) {
-    return password_hash($password, PASSWORD_ARGON2ID);
-}
-
-/**
  * Gera um token de recuperação de senha
  */
 function generatePasswordResetToken($user_id) {

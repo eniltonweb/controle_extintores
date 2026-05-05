@@ -698,14 +698,14 @@ class Barcode128 {
                 while ( ($i + $j < $len) && preg_match('`[0-9]`', $code[$i+$j]) ) $j++;
 
                 // 6 min everywhere or 4 mini at the end
-                $tableCActivated = ($j > 5) || (($i + $j - 1 == $len) && ($j > 3));
+                $tableCActivated = ($j > 5) || (($i + $j == $len) && ($j > 3));
 
                 if ( $tableCActivated ){
                     $result .= self::$encoding[ 99 ]; // C table
                     $sum += ++$isum * 99;
                 }
                 // 2 min for table C so need table B
-            } else if ($i + 1 >= $len || preg_match('`[^0-9]`', $code[$i]) || preg_match('`[^0-9]`', $code[$i+1])) {
+            } else if ( ($i == $len - 1) || (preg_match('`[^0-9]`', $code[$i])) || (preg_match('`[^0-9]`', $code[$i+1])) ) {
                 $tableCActivated = false;
                 $result .= self::$encoding[ 100 ]; // B table
                 $sum += ++$isum * 100;

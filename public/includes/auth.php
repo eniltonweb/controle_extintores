@@ -35,14 +35,6 @@ function authenticateUser($email, $password) {
 }
 
 /**
- * Encerra a sessão do usuário
- */
-function logoutUser() {
-    session_unset();
-    session_destroy();
-}
-
-/**
  * Verifica se o usuário tem permissão para acessar uma página
  */
 function hasPermission($required_level) {

@@ -216,11 +216,11 @@ if ($result) {
         </p>
         <?php endif; ?>
 
-        <?php if ($user_level == 'bombeiro' && !empty($liberado_inspecao)): ?>
+        <?php if ($user_level == 'bombeiro' && $liberado_inspecao): ?>
             <p><a href="formulario_inspecao.php?predio=<?php echo htmlspecialchars($extintor['Predio']); ?>&codigo=<?php echo $codigo; ?>" class="btn btn-primary">Realizar Inspeção de Nível 1</a></p>
         <?php endif; ?>
 
-        <?php if ($user_level == 'fornecedor' && !empty($liberado_manutencao)): ?>
+        <?php if ($user_level == 'fornecedor' && $liberado_manutencao): ?>
             <p><a href="formulario_manutencao.php?codigo=<?php echo $codigo; ?>" class="btn btn-primary">Realizar Manutenção de Nível 2</a></p>
         <?php endif; ?>
         <?php

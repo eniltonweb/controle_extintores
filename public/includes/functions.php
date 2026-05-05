@@ -37,14 +37,6 @@ function canPerformInspecao($user_level, $extintor) {
 }
 
 /**
- * Verifica se o usuário pode realizar manutenção
- */
-function canPerformManutencao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'fornecedor';
-}
-
-/**
  * Gera um token CSRF
  */
 function generateCSRFToken() {

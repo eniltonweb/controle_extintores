@@ -96,17 +96,3 @@ function generatePasswordResetToken($user_id) {
 
     return $token;
 }
-
-/**
- * Verifica se o token de recuperação de senha é válido
- */
-function isValidPasswordResetToken($token) {
-    global $conn;
-    $sql = "SELECT user_id FROM password_reset_tokens WHERE token = ? AND expires > NOW()";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $token);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    return $result && $result->num_rows > 0;
-}

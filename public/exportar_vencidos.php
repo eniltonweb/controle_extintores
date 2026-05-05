@@ -67,7 +67,7 @@ $html = '<!DOCTYPE html>
 <body>
     <div class="container-fluid mt-5">
         <div class="text-center mb-4">
-            <img src="http://www.enilton.com.br/img/michelin_logo2.png" alt="Michelin Logo" class="header-img">
+            <img src="' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/') . '/img/michelin_logo.png' . '" alt="Michelin Logo" class="header-img">
             <h2 class="text-center">Relatório de Extintores Vencidos</h2></div><div class="text-center mb-4 d-print-none"><button onclick="window.print()" class="btn btn-primary">Imprimir / Salvar como PDF</button></div><div>
         </div>
         <div class="table-responsive">

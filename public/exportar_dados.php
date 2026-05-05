@@ -22,10 +22,13 @@ $data_exportacao = date('Y-m-d_H-i-s');
 $nome_arquivo = "extintores_$data_exportacao.html";
 
 // Cabeçalhos HTTP para download do arquivo HTML
-header('Content-Type: text/html; charset=utf-8');
-header('Content-Disposition: attachment; filename=' . $nome_arquivo);
+// We will output PDF via dompdf
 
-// Início da exportação HTML
+require_once '../vendor/autoload.php';
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+ob_start();
 echo '<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -109,6 +112,18 @@ echo '        </tbody>
     </div>
 </body>
 </html>';
+
+$html = ob_get_clean();
+
+$options = new Options();
+$options->set('isRemoteEnabled', true);
+$dompdf = new Dompdf($options);
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'landscape');
+$dompdf->render();
+
+$nome_arquivo_pdf = str_replace('.html', '.pdf', $nome_arquivo);
+$dompdf->stream($nome_arquivo_pdf, array('Attachment' => true));
 
 // Registrar a auditoria
 $user_id = $_SESSION['user_id'];

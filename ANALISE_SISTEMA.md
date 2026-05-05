@@ -63,3 +63,6 @@ O projeto é uma aplicação web em **PHP procedural** com frontend em HTML/CSS/
 
 ## Conclusão
 O sistema atende ao objetivo operacional de controle de extintores, porém possui riscos técnicos e de segurança que merecem correção prioritária antes de crescimento de uso. O maior risco atual é o gerenciamento de credenciais e a inconsistência do domínio de usuários.
+
+### Bibliotecas de Terceiros
+- A biblioteca `fpdf` (`public/cod/fpdf.php`) possui código legado de compatibilidade (ex: `// Fix parameter order` na função `Output`). Esse código deve ser mantido como está e não modificado, para preservar a retrocompatibilidade esperada de versões antigas e novas dessa biblioteca.

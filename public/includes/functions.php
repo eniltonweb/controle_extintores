@@ -79,22 +79,6 @@ function setSecurityHeaders() {
 }
 
 /**
- * Retorna o template de cabeçalho correto com base no nível do usuário
- */
-function getHeaderTemplate($user_level) {
-    switch ($user_level) {
-        case 'admin':
-            return '../templates/header1.php';
-        case 'bombeiro':
-            return '../templates/header2.php';
-        case 'fornecedor':
-            return '../templates/header3.php';
-        default:
-            return '../templates/header.php';
-    }
-}
-
-/**
  * Registra uma ação de auditoria
  */
 function logAuditAction($user_id, $action, $details) {

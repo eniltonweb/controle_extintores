@@ -2,13 +2,6 @@
 // functions.php
 
 /**
- * Sanitiza a entrada do usuário
- */
-function sanitizeInput($input) {
-    return htmlspecialchars(strip_tags(trim($input)));
-}
-
-/**
  * Obtém os detalhes do extintor do banco de dados
  */
 function getExtintorDetails($conn, $codigo) {

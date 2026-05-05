@@ -23,7 +23,7 @@ header('X-XSS-Protection: 1; mode=block');
 
 // Consulta para obter as informações do extintor e o nome do usuário que fez a última inspeção de nível 1
 $sql = "
-    SELECT e.*, 
+    SELECT e.*,
            e.usuario AS usuario_inspecao_nivel1,
            e.usuario_n2 AS usuario_manutencao_nivel2
     FROM bd_extintores e
@@ -34,6 +34,36 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $codigo);
 $stmt->execute();
 $result = $stmt->get_result();
+
+$liberado_inspecao = false;
+if ($user_level == 'bombeiro') {
+    $sql_inspecao = "SELECT 1 FROM liberacao_inspecao WHERE codigo_extintor = ? AND liberado_para = 'bombeiro' LIMIT 1";
+    $stmt_inspecao = $conn->prepare($sql_inspecao);
+    if ($stmt_inspecao) {
+        $stmt_inspecao->bind_param('s', $codigo);
+        $stmt_inspecao->execute();
+        $result_inspecao = $stmt_inspecao->get_result();
+        if ($result_inspecao && $result_inspecao->num_rows > 0) {
+            $liberado_inspecao = true;
+        }
+        $stmt_inspecao->close();
+    }
+}
+
+$liberado_manutencao = false;
+if ($user_level == 'fornecedor') {
+    $sql_manutencao = "SELECT 1 FROM liberacao_manutencao WHERE codigo_extintor = ? AND liberado_para = 'fornecedor' LIMIT 1";
+    $stmt_manutencao = $conn->prepare($sql_manutencao);
+    if ($stmt_manutencao) {
+        $stmt_manutencao->bind_param('s', $codigo);
+        $stmt_manutencao->execute();
+        $result_manutencao = $stmt_manutencao->get_result();
+        if ($result_manutencao && $result_manutencao->num_rows > 0) {
+            $liberado_manutencao = true;
+        }
+        $stmt_manutencao->close();
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -165,7 +195,7 @@ if ($result) {
         <p><strong>Local Exato:</strong> <?php echo htmlspecialchars($extintor['Local_Exato']); ?></p>
         <p><strong>Tipo de Extintor:</strong> <?php echo htmlspecialchars($extintor['tip_extintor']); ?></p>
         <p><strong>Carga:</strong> <?php echo htmlspecialchars($extintor['carga']); ?></p>
-        <p><strong>Última Manutenção Nível 1:</strong> 
+        <p><strong>Última Manutenção Nível 1:</strong>
             <?php
             if (!empty($extintor['inspecao_trimestral_nivel1'])) {
                 echo htmlspecialchars(date_format(date_create($extintor['inspecao_trimestral_nivel1']), 'd-m-Y'));
@@ -174,10 +204,10 @@ if ($result) {
             }
             ?>
         </p>
-        <p><strong>Usuário Última Inspeção Nível 1:</strong> 
-		<?php 
+        <p><strong>Usuário Última Inspeção Nível 1:</strong>
+		<?php
 		if (!empty($extintor['usuario_inspecao_nivel1']))	{
-			echo htmlspecialchars($extintor['usuario_inspecao_nivel1']); 
+			echo htmlspecialchars($extintor['usuario_inspecao_nivel1']);
 		} else {
 			echo 'Não Disponível';
 		}
@@ -185,7 +215,7 @@ if ($result) {
 		</p>
 
         <?php if ($user_id): ?>
-        <p><strong>Última Manutenção Nível 2:</strong> 
+        <p><strong>Última Manutenção Nível 2:</strong>
             <?php
             if (!empty($extintor['manutencao_n2'])) {
                 echo htmlspecialchars(date_format(date_create($extintor['manutencao_n2']), 'd-m-Y'));
@@ -194,7 +224,7 @@ if ($result) {
             }
             ?>
         </p>
-        <p><strong>Próxima Manutenção Nível 2:</strong> 
+        <p><strong>Próxima Manutenção Nível 2:</strong>
             <?php
             if (!empty($extintor['proxima_manutencao_n2'])) {
                 echo htmlspecialchars(date_format(date_create($extintor['proxima_manutencao_n2']), 'd-m-Y'));

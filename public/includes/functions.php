@@ -2,13 +2,6 @@
 // functions.php
 
 /**
- * Sanitiza a entrada do usuário
- */
-function sanitizeInput($input) {
-    return htmlspecialchars(strip_tags(trim($input)));
-}
-
-/**
  * Obtém os detalhes do extintor do banco de dados
  */
 function getExtintorDetails($conn, $codigo) {
@@ -41,14 +34,6 @@ function getExtintorDetails($conn, $codigo) {
 function canPerformInspecao($user_level, $extintor) {
     // Implemente a lógica de verificação aqui
     return $user_level == 'bombeiro';
-}
-
-/**
- * Verifica se o usuário pode realizar manutenção
- */
-function canPerformManutencao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'fornecedor';
 }
 
 /**

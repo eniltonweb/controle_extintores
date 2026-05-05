@@ -20,43 +20,55 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
     $predio = isset($_GET['predio']) ? $_GET['predio'] : '';
 
     $sql = "
-        SELECT 
-            bd_extintores.codigo AS extintor_codigo, 
+        SELECT
+            bd_extintores.codigo AS extintor_codigo,
             bd_extintores.Local_Exato AS local_exato,
             bd_extintores.Predio AS predio,
-            COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome, 
+            COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome,
             bd_extintores.inspecao_trimestral_nivel1 AS data_inspecao,
-            bd_extintores.selo_do_Inmetro, 
+            bd_extintores.selo_do_Inmetro,
             bd_extintores.sinalizacao_vertical,
-            bd_extintores.sinalizacao_piso, 
+            bd_extintores.sinalizacao_piso,
             bd_extintores.ficha_inspecao_trimestral,
-            bd_extintores.lacre, 
+            bd_extintores.lacre,
             bd_extintores.pressao_manometro,
-            bd_extintores.anel_identificacao, 
+            bd_extintores.anel_identificacao,
             bd_extintores.pesagem_co2_semestral,
             bd_extintores.usuario AS usuario_id,
             bd_extintores.comentarios AS comentario,
             bd_extintores.updated_at AS atualizacao
-        FROM 
+        FROM
             bd_extintores
-        LEFT JOIN 
+        LEFT JOIN
             usuarios ON bd_extintores.usuario = usuarios.id
-        WHERE 
-            bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL 
+        WHERE
+            bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL
             AND bd_extintores.inspecao_trimestral_nivel1 >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
     ";
 
+    $types = "";
+    $params = [];
+
     if (!empty($extintor_codigo)) {
-        $sql .= " AND bd_extintores.codigo LIKE '%" . $conn->real_escape_string($extintor_codigo) . "%'";
+        $sql .= " AND bd_extintores.codigo LIKE ?";
+        $types .= "s";
+        $params[] = "%" . $extintor_codigo . "%";
     }
 
     if (!empty($predio)) {
-        $sql .= " AND bd_extintores.Predio LIKE '%" . $conn->real_escape_string($predio) . "%'";
+        $sql .= " AND bd_extintores.Predio LIKE ?";
+        $types .= "s";
+        $params[] = "%" . $predio . "%";
     }
 
     $sql .= " ORDER BY bd_extintores.inspecao_trimestral_nivel1 DESC";
 
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    if ($types !== "") {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $data = [];
     $inspecoes_por_data = [];
@@ -223,7 +235,7 @@ $conn->close();
         </thead>
         <tbody></tbody>
     </table>
-    
+
     <div class="chart-container mt-4">
         <canvas id="inspecaoChart"></canvas>
     </div>

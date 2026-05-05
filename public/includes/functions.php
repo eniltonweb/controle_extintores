@@ -78,14 +78,4 @@ function getHeaderTemplate($user_level) {
             return '../templates/header.php';
     }
 }
-
-/**
- * Registra uma ação de auditoria
- */
-function logAuditAction($user_id, $action, $details) {
-    global $conn;
-    $sql = "INSERT INTO audit_log (user_id, action, details, timestamp) VALUES (?, ?, ?, NOW())";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('iss', $user_id, $action, $details);
-    $stmt->execute();
-}
+

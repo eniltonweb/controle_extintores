@@ -2,13 +2,6 @@
 // functions.php
 
 /**
- * Sanitiza a entrada do usuário
- */
-function sanitizeInput($input) {
-    return htmlspecialchars(strip_tags(trim($input)));
-}
-
-/**
  * Obtém os detalhes do extintor do banco de dados
  */
 function getExtintorDetails($conn, $codigo) {
@@ -41,14 +34,6 @@ function getExtintorDetails($conn, $codigo) {
 function canPerformInspecao($user_level, $extintor) {
     // Implemente a lógica de verificação aqui
     return $user_level == 'bombeiro';
-}
-
-/**
- * Verifica se o usuário pode realizar manutenção
- */
-function canPerformManutencao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'fornecedor';
 }
 
 /**
@@ -93,14 +78,4 @@ function getHeaderTemplate($user_level) {
             return '../templates/header.php';
     }
 }
-
-/**
- * Registra uma ação de auditoria
- */
-function logAuditAction($user_id, $action, $details) {
-    global $conn;
-    $sql = "INSERT INTO audit_log (user_id, action, details, timestamp) VALUES (?, ?, ?, NOW())";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('iss', $user_id, $action, $details);
-    $stmt->execute();
-}
+

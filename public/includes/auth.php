@@ -64,15 +64,6 @@ function hasPermission($required_level) {
     }
 }
 
-/**
- * Redireciona o usuário se não tiver permissão
- */
-function requirePermission($required_level) {
-    if (!hasPermission($required_level)) {
-        header('Location: access_denied.php');
-        exit();
-    }
-}
 
 /**
  * Gera um hash seguro para a senha

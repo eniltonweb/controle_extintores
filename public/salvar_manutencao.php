@@ -2,10 +2,13 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'fornecedor') {
-    header('Location: index.php');
-    exit();
+include_once 'includes/auth.php';
+requirePermission('fornecedor');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
 }
 
 // Capturar dados do formulário

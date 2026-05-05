@@ -2,13 +2,13 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
-    header('Location: index.php');
-    exit();
-}
+include_once 'includes/auth.php';
+requirePermission('admin');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
     if (isset($_POST['delete_selected'])) {
         if (!empty($_POST['logs'])) {
             // Evitar excluir o log que registra a ação de apagar todos os logs
@@ -171,6 +171,7 @@ $conn->close();
     <?php endif; ?>
 
     <form method="POST" action="auditoria_logs.php">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>

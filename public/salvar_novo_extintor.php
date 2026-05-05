@@ -7,14 +7,14 @@ error_reporting(E_ALL);
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'bombeiro') {
-    header('Location: index.php');
-    exit();
-}
+include_once 'includes/auth.php';
+requirePermission('bombeiro');
 
 // Verificar se o formulário foi submetido
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
     $novo_predio = filter_input(INPUT_POST, 'novo_predio', FILTER_SANITIZE_SPECIAL_CHARS);
     $novo_codigo = filter_input(INPUT_POST, 'novo_codigo', FILTER_SANITIZE_SPECIAL_CHARS);
     $novo_local = filter_input(INPUT_POST, 'novo_local', FILTER_SANITIZE_SPECIAL_CHARS);

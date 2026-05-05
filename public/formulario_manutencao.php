@@ -2,11 +2,10 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'fornecedor') {
-    header('Location: index.php');
-    exit();
-}
+include_once 'includes/auth.php';
+requirePermission('fornecedor');
 
 // Consultar extintores liberados para manutenção de nível 2
 $sql_liberados_manutencao = "
@@ -235,6 +234,7 @@ if ($codigo) {
 
 <?php if ($show_form): ?>
     <form method="POST" action="salvar_manutencao.php">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <input type="hidden" name="codigo" value="<?php echo htmlspecialchars($codigo); ?>">
         <div class="form-check">
             <input type="checkbox" class="form-check-input" id="manutencao_n2" name="manutencao_n2" value="1">

@@ -157,6 +157,32 @@ if ($user_level == 'admin') {
 if ($result) {
     if ($result->num_rows > 0) {
         $extintor = $result->fetch_assoc();
+
+        // Verificar se o bombeiro tem permissão para inspeção de nível 1
+        $liberado_inspecao = false;
+        if ($user_level == 'bombeiro') {
+            $stmt_inspecao = $conn->prepare("SELECT 1 FROM liberacao_inspecao WHERE codigo_extintor = ? AND liberado_para = 'bombeiro'");
+            $stmt_inspecao->bind_param('s', $codigo);
+            $stmt_inspecao->execute();
+            $stmt_inspecao->store_result();
+            if ($stmt_inspecao->num_rows > 0) {
+                $liberado_inspecao = true;
+            }
+            $stmt_inspecao->close();
+        }
+
+        // Verificar se o fornecedor tem permissão para manutenção de nível 2
+        $liberado_manutencao = false;
+        if ($user_level == 'fornecedor') {
+            $stmt_manutencao = $conn->prepare("SELECT 1 FROM liberacao_manutencao WHERE codigo_extintor = ? AND liberado_para = 'fornecedor'");
+            $stmt_manutencao->bind_param('s', $codigo);
+            $stmt_manutencao->execute();
+            $stmt_manutencao->store_result();
+            if ($stmt_manutencao->num_rows > 0) {
+                $liberado_manutencao = true;
+            }
+            $stmt_manutencao->close();
+        }
         ?>
         <h2 class="detalhes-extintor">Detalhes do Extintor</h2>
         <p><strong>Código:</strong> <?php echo htmlspecialchars($extintor['codigo']); ?></p>

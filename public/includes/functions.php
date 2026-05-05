@@ -9,46 +9,11 @@ function sanitizeInput($input) {
 }
 
 /**
- * Obtém os detalhes do extintor do banco de dados
- */
-function getExtintorDetails($conn, $codigo) {
-    $sql = "SELECT e.*, 
-                   e.usuario AS usuario_inspecao_nivel1,
-                   hm2.usuario_id AS usuario_manutencao_nivel2
-            FROM bd_extintores e
-            LEFT JOIN historico_manutencao hm1 ON e.id = hm1.extintor_id AND hm1.tipo_manutencao = 'nivel_1'
-            LEFT JOIN usuarios u ON hm1.usuario_id = u.id
-            LEFT JOIN historico_manutencao hm2 ON e.id = hm2.extintor_id AND hm2.tipo_manutencao = 'nivel_2'
-            WHERE e.codigo = ?
-            ORDER BY hm1.data_manutencao DESC, hm2.data_manutencao DESC
-            LIMIT 1";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $codigo);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result && $result->num_rows > 0) {
-        return $result->fetch_assoc();
-    }
-
-    return null;
-}
-
-/**
  * Verifica se o usuário pode realizar inspeção
  */
 function canPerformInspecao($user_level, $extintor) {
     // Implemente a lógica de verificação aqui
     return $user_level == 'bombeiro';
-}
-
-/**
- * Verifica se o usuário pode realizar manutenção
- */
-function canPerformManutencao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'fornecedor';
 }
 
 /**
@@ -76,22 +41,6 @@ function setSecurityHeaders() {
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
     header('X-XSS-Protection: 1; mode=block');
-}
-
-/**
- * Retorna o template de cabeçalho correto com base no nível do usuário
- */
-function getHeaderTemplate($user_level) {
-    switch ($user_level) {
-        case 'admin':
-            return '../templates/header1.php';
-        case 'bombeiro':
-            return '../templates/header2.php';
-        case 'fornecedor':
-            return '../templates/header3.php';
-        default:
-            return '../templates/header.php';
-    }
 }
 
 /**

@@ -11,11 +11,27 @@ function isAuthenticated() {
 }
 
 /**
- * Encerra a sessão do usuário
+ * Autentica o usuário
  */
-function logoutUser() {
-    session_unset();
-    session_destroy();
+function authenticateUser($email, $password) {
+    global $conn;
+
+    $sql = "SELECT id, password, level FROM usuarios WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_level'] = $user['level'];
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**

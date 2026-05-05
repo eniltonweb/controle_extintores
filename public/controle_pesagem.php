@@ -28,7 +28,7 @@ if (!isset($_SESSION['nome_usuario'])){
       <li class="nav-item"><a class="nav-link" href="inspecoes.php">Inspeções</a></li>
       <li class="nav-item active"><a class="nav-link" href="controle_pesagem.php">Pesagem CO₂</a></li>
       <li class="nav-item"><a class="nav-link" href="usuarios.php">Usuários</a></li>
-      <li class="nav-item"><a class="nav-link" href="logout.php">Sair</a></li>
+      <li class="nav-item"><a class="nav-link" href="sair.php">Sair</a></li>
     </ul>
   </div>
 </nav>

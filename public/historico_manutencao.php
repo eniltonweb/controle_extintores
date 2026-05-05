@@ -16,28 +16,32 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
 
     // Consulta atualizada sem o LEFT JOIN
     $sql = "
-        SELECT 
-            bd_extintores.codigo AS extintor_codigo, 
+        SELECT
+            bd_extintores.codigo AS extintor_codigo,
             bd_extintores.Local_Exato AS local_exato,
             bd_extintores.Predio AS predio,
             bd_extintores.cobertura,
-            CASE 
+            CASE
                 WHEN bd_extintores.usuario_n2 IS NULL OR bd_extintores.usuario_n2 = '' THEN 'Usuário removido'
                 ELSE bd_extintores.usuario_n2
-            END AS usuario_nome, 
+            END AS usuario_nome,
             bd_extintores.manutencao_n2 AS data_manutencao
-        FROM 
+        FROM
             bd_extintores
-        WHERE 
+        WHERE
             bd_extintores.manutencao_n2 IS NOT NULL
     ";
 
+    $params = [];
+
     if (!empty($extintor_codigo)) {
-        $sql .= " AND bd_extintores.codigo LIKE '%" . $conn->real_escape_string($extintor_codigo) . "%'";
+        $sql .= " AND bd_extintores.codigo LIKE ?";
+        $params[] = '%' . $extintor_codigo . '%';
     }
 
     if (!empty($predio)) {
-        $sql .= " AND bd_extintores.Predio LIKE '%" . $conn->real_escape_string($predio) . "%'";
+        $sql .= " AND bd_extintores.Predio LIKE ?";
+        $params[] = '%' . $predio . '%';
     }
 
     if ($cobertura !== '') {
@@ -45,16 +49,24 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
     }
 
     if (!empty($data_inicial)) {
-        $sql .= " AND bd_extintores.manutencao_n2 >= '" . $conn->real_escape_string($data_inicial) . "'";
+        $sql .= " AND bd_extintores.manutencao_n2 >= ?";
+        $params[] = $data_inicial;
     }
 
     if (!empty($data_final)) {
-        $sql .= " AND bd_extintores.manutencao_n2 <= '" . $conn->real_escape_string($data_final) . "'";
+        $sql .= " AND bd_extintores.manutencao_n2 <= ?";
+        $params[] = $data_final;
     }
 
     $sql .= " ORDER BY bd_extintores.manutencao_n2 DESC";
 
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    if (!empty($params)) {
+        $stmt->execute($params);
+    } else {
+        $stmt->execute();
+    }
+    $result = $stmt->get_result();
 
     $data = [];
     $manutencoes_por_data = [];

@@ -56,22 +56,6 @@ function hasPermission($required_level) {
     }
 }
 
-/**
- * Redireciona o usuário se não tiver permissão
- */
-function requirePermission($required_level) {
-    if (!hasPermission($required_level)) {
-        header('Location: access_denied.php');
-        exit();
-    }
-}
-
-/**
- * Gera um hash seguro para a senha
- */
-function hashPassword($password) {
-    return password_hash($password, PASSWORD_ARGON2ID);
-}
 
 /**
  * Gera um token de recuperação de senha
@@ -87,18 +71,4 @@ function generatePasswordResetToken($user_id) {
     $stmt->execute();
 
     return $token;
-}
-
-/**
- * Verifica se o token de recuperação de senha é válido
- */
-function isValidPasswordResetToken($token) {
-    global $conn;
-    $sql = "SELECT user_id FROM password_reset_tokens WHERE token = ? AND expires > NOW()";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $token);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    return $result && $result->num_rows > 0;
 }

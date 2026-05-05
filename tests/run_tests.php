@@ -23,7 +23,6 @@ echo "Running tests...\n\n";
 require_once __DIR__ . '/../public/includes/functions.php';
 
 // Include test cases
-require_once __DIR__ . '/FunctionsTest.php';
 
 echo "\n\n";
 

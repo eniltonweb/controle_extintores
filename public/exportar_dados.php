@@ -54,11 +54,12 @@ echo '<!DOCTYPE html>
             color: #004c97;
             margin-bottom: 20px;
         }
+        @media print { @page { size: landscape; } .d-print-none { display: none !important; } }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center">Listagem de Extintores</h2>
+    <div class="container-fluid mt-5">
+        <h2 class="text-center">Listagem de Extintores</h2><div class="text-center mb-4 d-print-none"><button onclick="window.print()" class="btn btn-primary">Imprimir / Salvar como PDF</button></div>
         <table class="table table-bordered">
             <thead>
                 <tr>

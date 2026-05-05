@@ -61,13 +61,14 @@ $html = '<!DOCTYPE html>
         h2 {
             color: #0056b3;
         }
+        @media print { @page { size: landscape; } .d-print-none { display: none !important; } }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <div class="text-center mb-4">
             <img src="http://www.enilton.com.br/img/michelin_logo2.png" alt="Michelin Logo" class="header-img">
-            <h2 class="text-center">Relatório de Extintores Vencidos</h2>
+            <h2 class="text-center">Relatório de Extintores Vencidos</h2></div><div class="text-center mb-4 d-print-none"><button onclick="window.print()" class="btn btn-primary">Imprimir / Salvar como PDF</button></div><div>
         </div>
         <div class="table-responsive">
             <table class="table table-bordered table-striped">

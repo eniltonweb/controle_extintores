@@ -46,6 +46,7 @@ if ($result->num_rows > 0) {
         <meta charset='UTF-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <title>Histórico de Manutenções de Extintores</title>
+        <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' rel='stylesheet'>
         <style>
             table {
                 width: 100%;
@@ -62,11 +63,19 @@ if ($result->num_rows > 0) {
             th {
                 background-color: #f2f2f2;
             }
+            @media print { @page { size: landscape; } .d-print-none { display: none !important; } }
         </style>
     </head>
     <body>
-        <h2>Histórico de Manutenções de Extintores</h2>
-        <table>
+        <div class='container-fluid mt-5'>
+        <div class='text-center mb-4'>
+            <h2 class='text-center'>Histórico de Manutenções de Extintores</h2>
+        </div>
+        <div class='text-center mb-4 d-print-none'>
+            <button onclick='window.print()' class='btn btn-primary'>Imprimir / Salvar como PDF</button>
+        </div>
+        <div class='table-responsive'>
+            <table class='table table-bordered table-striped text-center'>
             <thead>
                 <tr>
                     <th>Extintor</th>
@@ -99,6 +108,7 @@ if ($result->num_rows > 0) {
     $html .= "
             </tbody>
         </table>
+    </div>
     </body>
     </html>
     ";
@@ -146,14 +156,17 @@ if ($result->num_rows > 0) {
                 color: #27509b;
                 font-weight: bold;
             }
+            @media print { @page { size: landscape; } .d-print-none { display: none !important; } }
         </style>
     </head>
     <body>
+        <div class='container-fluid mt-5'>
         <div class='message-box'>
             <h2>Nenhum Registro Encontrado</h2>
             <p>Não foram encontrados registros de manutenção para exportação de acordo com os critérios selecionados.</p>
             <a href='historico_manutencao.php'>Voltar para Histórico de Manutenções</a>
         </div>
+    </div>
     </body>
     </html>
     ";

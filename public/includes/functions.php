@@ -17,14 +17,6 @@ function canPerformInspecao($user_level, $extintor) {
 }
 
 /**
- * Verifica se o usuário pode realizar manutenção
- */
-function canPerformManutencao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'fornecedor';
-}
-
-/**
  * Gera um token CSRF
  */
 function generateCSRFToken() {
@@ -49,22 +41,6 @@ function setSecurityHeaders() {
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
     header('X-XSS-Protection: 1; mode=block');
-}
-
-/**
- * Retorna o template de cabeçalho correto com base no nível do usuário
- */
-function getHeaderTemplate($user_level) {
-    switch ($user_level) {
-        case 'admin':
-            return '../templates/header1.php';
-        case 'bombeiro':
-            return '../templates/header2.php';
-        case 'fornecedor':
-            return '../templates/header3.php';
-        default:
-            return '../templates/header.php';
-    }
 }
 
 /**

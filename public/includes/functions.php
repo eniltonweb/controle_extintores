@@ -64,18 +64,12 @@ function setSecurityHeaders() {
 }
 
 /**
- * Retorna o template de cabeçalho correto com base no nível do usuário
+ * Registra uma ação de auditoria
  */
-function getHeaderTemplate($user_level) {
-    switch ($user_level) {
-        case 'admin':
-            return '../templates/header1.php';
-        case 'bombeiro':
-            return '../templates/header2.php';
-        case 'fornecedor':
-            return '../templates/header3.php';
-        default:
-            return '../templates/header.php';
-    }
+function logAuditAction($user_id, $action, $details) {
+    global $conn;
+    $sql = "INSERT INTO audit_log (user_id, action, details, timestamp) VALUES (?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('iss', $user_id, $action, $details);
+    $stmt->execute();
 }
-

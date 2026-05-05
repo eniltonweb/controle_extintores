@@ -705,7 +705,7 @@ class Barcode128 {
                     $sum += ++$isum * 99;
                 }
                 // 2 min for table C so need table B
-            } else if ( ($i == $len - 1) || (preg_match('`[^0-9]`', $code[$i])) || (preg_match('`[^0-9]`', $code[$i+1])) ) { //todo : verifier le JS : len - 1!!! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            } else if ($i + 1 >= $len || preg_match('`[^0-9]`', $code[$i]) || preg_match('`[^0-9]`', $code[$i+1])) {
                 $tableCActivated = false;
                 $result .= self::$encoding[ 100 ]; // B table
                 $sum += ++$isum * 100;

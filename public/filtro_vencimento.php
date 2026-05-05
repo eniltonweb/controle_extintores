@@ -8,20 +8,6 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_level'], ['admin',
     exit();
 }
 
-// Atualizar automaticamente a coluna 'dias_para_expirar_n2'
-$sql_update = "UPDATE bd_extintores 
-               SET dias_para_expirar_n2 = DATEDIFF(proxima_manutencao_n2, CURDATE()) 
-               WHERE proxima_manutencao_n2 IS NOT NULL";
-if ($conn->query($sql_update) === FALSE) {
-    error_log("Erro ao atualizar dias_para_expirar_n2: " . $conn->error);
-} else {
-    if ($conn->affected_rows > 0) {
-        error_log("dias_para_expirar_n2 atualizado para " . $conn->affected_rows . " registros.");
-    } else {
-        error_log("Nenhum registro foi atualizado em dias_para_expirar_n2. Verifique se a coluna proxima_manutencao_n2 está preenchida corretamente.");
-    }
-}
-
 // Filtrar os extintores com base nos dias para expirar
 if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
     $dias = filter_input(INPUT_GET, 'dias', FILTER_SANITIZE_NUMBER_INT) ?: 30; // Filtrar os dias, valor padrão: 30
@@ -39,7 +25,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
         $sort_order = 'ASC';
     }
 
-    $sql = "SELECT * FROM bd_extintores WHERE dias_para_expirar_n2 <= ? ORDER BY $sort_column $sort_order";
+    $order_by_clause = $sort_column;
+    if ($sort_column === 'dias_para_expirar_n2') {
+        $order_by_clause = 'DATEDIFF(proxima_manutencao_n2, CURDATE())';
+    }
+
+    $sql = "SELECT *, DATEDIFF(proxima_manutencao_n2, CURDATE()) AS dias_para_expirar_n2 FROM bd_extintores WHERE DATEDIFF(proxima_manutencao_n2, CURDATE()) <= ? AND proxima_manutencao_n2 IS NOT NULL ORDER BY $order_by_clause $sort_order";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $dias);
     $stmt->execute();

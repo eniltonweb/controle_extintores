@@ -705,7 +705,7 @@ class Barcode128 {
                     $sum += ++$isum * 99;
                 }
                 // 2 min for table C so need table B
-            } else if ( ($i == $len - 1) || (preg_match('`[^0-9]`', $code[$i])) || (preg_match('`[^0-9]`', $code[$i+1])) ) { //todo : verifier le JS : len - 1!!! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            } else if ($i + 1 >= $len || preg_match('`[^0-9]`', $code[$i]) || preg_match('`[^0-9]`', $code[$i+1])) {
                 $tableCActivated = false;
                 $result .= self::$encoding[ 100 ]; // B table
                 $sum += ++$isum * 100;
@@ -1073,7 +1073,7 @@ class BarcodeDatamatrix {
                     $datamatrixTemp[$i+1][$j+1] = 1;
                 } else{
                     $datamatrixTemp[$i+1][$j+1] = 0;
-                    $datamatrixTemp[$i+1][$j+1] = $datamatrix[$i-1-(2*(floor($i/($rowsRegionCW+2))))][$j-1-(2*(floor($j/($colsRegionCW+2))))]; // todo : parseInt => ?
+                    $datamatrixTemp[$i+1][$j+1] = $datamatrix[(int)($i-1-(2*(int)($i/($rowsRegionCW+2))))][(int)($j-1-(2*(int)($j/($colsRegionCW+2))))];
                 }
             }
         }

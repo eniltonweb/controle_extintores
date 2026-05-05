@@ -72,3 +72,13 @@ function generatePasswordResetToken($user_id) {
 
     return $token;
 }
+
+/**
+ * Redireciona o usuário caso não tenha a permissão necessária
+ */
+function requirePermission($required_level) {
+    if (!hasPermission($required_level)) {
+        header("Location: access_denied.php");
+        exit();
+    }
+}

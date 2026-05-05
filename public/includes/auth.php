@@ -47,3 +47,19 @@ function hasPermission($required_level) {
 function hashPassword($password) {
     return password_hash($password, PASSWORD_ARGON2ID);
 }
+
+/**
+ * Gera um token de recuperação de senha
+ */
+function generatePasswordResetToken($user_id) {
+    $token = bin2hex(random_bytes(32));
+    $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+    global $conn;
+    $sql = "INSERT INTO password_reset_tokens (user_id, token, expires) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('iss', $user_id, $token, $expires);
+    $stmt->execute();
+
+    return $token;
+}

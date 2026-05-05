@@ -9,14 +9,6 @@ function sanitizeInput($input) {
 }
 
 /**
- * Verifica se o usuário pode realizar inspeção
- */
-function canPerformInspecao($user_level, $extintor) {
-    // Implemente a lógica de verificação aqui
-    return $user_level == 'bombeiro';
-}
-
-/**
  * Gera um token CSRF
  */
 function generateCSRFToken() {

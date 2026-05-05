@@ -1,14 +1,17 @@
 <?php
 session_start();
 include '../config/db_conexao.php';
+include_once 'includes/functions.php';
 
 // Verificar se o usuário está logado
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_level'], ['admin', 'fornecedor'])) {
-    header('Location: index.php');
+include_once 'includes/auth.php';
+if (!isAuthenticated() || !in_array($_SESSION['user_level'], ['admin', 'fornecedor'])) {
+    header('Location: access_denied.php');
     exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
     // Inserir um novo extintor
     if (isset($_POST['inserir'])) {
         $codigo = filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -214,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
         <h2>Inserir Extintor</h2>
         <form method="POST" action="extintores.php">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
             <label for="codigo">Código:</label>
             <input type="text" id="codigo" name="codigo" required>
             <label for="predio">Prédio:</label>
@@ -231,6 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <h2>Remover Extintor</h2>
         <form method="POST" action="extintores.php">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
             <label for="codigo">Código:</label>
             <input type="text" id="codigo" name="codigo" required>
             <button type="submit" name="remover">Remover Extintor</button>

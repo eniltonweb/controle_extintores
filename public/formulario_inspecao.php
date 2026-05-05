@@ -2,11 +2,10 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'bombeiro') {
-    header('Location: index.php');
-    exit();
-}
+include_once 'includes/auth.php';
+requirePermission('bombeiro');
 
 $predio = filter_input(INPUT_GET, 'predio', FILTER_SANITIZE_STRING);
 $codigo = filter_input(INPUT_GET, 'codigo', FILTER_SANITIZE_STRING);
@@ -262,6 +261,7 @@ if ($predio) {
 
     <?php if ($show_form): ?>
         <form method="POST" action="salvar_inspecao.php" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
             <input type="hidden" name="codigo" value="<?php echo htmlspecialchars($codigo); ?>">
 
             <label for="Local_Exato">Local Exato:</label>

@@ -2,11 +2,10 @@
 session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
+include_once 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'bombeiro') {
-    header('Location: index.php');
-    exit();
-}
+include_once 'includes/auth.php';
+requirePermission('bombeiro');
 
 // Obter prédios com extintores existentes
 $sql_predios = "SELECT DISTINCT Predio FROM bd_extintores";
@@ -170,6 +169,7 @@ $result_predios = $conn->query($sql_predios);
 <div class="container mt-4">
     <h2>Adicionar Novo Extintor</h2>
     <form method="POST" action="salvar_novo_extintor.php" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <label for="novo_predio">Prédio:</label>
         <select id="novo_predio" name="novo_predio" required onchange="gerarCodigoNovoExtintor()">
             <option value="">Selecione um Prédio</option>

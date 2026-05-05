@@ -1073,7 +1073,7 @@ class BarcodeDatamatrix {
                     $datamatrixTemp[$i+1][$j+1] = 1;
                 } else{
                     $datamatrixTemp[$i+1][$j+1] = 0;
-                    $datamatrixTemp[$i+1][$j+1] = $datamatrix[$i-1-(2*(floor($i/($rowsRegionCW+2))))][$j-1-(2*(floor($j/($colsRegionCW+2))))]; // todo : parseInt => ?
+                    $datamatrixTemp[$i+1][$j+1] = $datamatrix[(int)($i-1-(2*(int)($i/($rowsRegionCW+2))))][(int)($j-1-(2*(int)($j/($colsRegionCW+2))))];
                 }
             }
         }

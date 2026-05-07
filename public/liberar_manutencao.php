@@ -7,10 +7,7 @@ include_once 'includes/auth.php';
 requirePermission('admin');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
-        header("Location: liberar_manutencao.php?error=" . urlencode("Erro de validação CSRF."));
-        exit();
-    }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { $message = "Erro de validação CSRF."; } else {
     $action = $_POST['action'];
     $tipo_liberacao = $_POST['tipo_liberacao'];
     $liberar_para = $_POST['liberar_para'];
@@ -63,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message = "Erro ao realizar a ação: " . $stmt->error;
     }
     $stmt->close();
+}
 }
 
 // Adicionar um endpoint para carregar os dados de liberação de forma assíncrona

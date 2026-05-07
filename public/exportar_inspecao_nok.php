@@ -22,26 +22,26 @@ header('Content-Disposition: attachment; filename=historico_inspecao_naok_' . da
 
 // Construir consulta SQL
 $sql = "
-    SELECT 
-        bd_extintores.codigo AS extintor_codigo, 
-        bd_extintores.Local_Exato AS local_exato,
-        bd_extintores.Predio AS predio,
+    SELECT
+        COALESCE(bd_extintores.codigo, '') AS extintor_codigo,
+        COALESCE(bd_extintores.Local_Exato, '') AS local_exato,
+        COALESCE(bd_extintores.Predio, '') AS predio,
         COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome,
-		bd_extintores.tip_extintor AS tipo_extintor,		
-        DATE_FORMAT(bd_extintores.inspecao_trimestral_nivel1, '%d-%m-%Y') AS data_inspecao,
-        bd_extintores.selo_do_Inmetro, 
-        bd_extintores.sinalizacao_vertical,
-        bd_extintores.sinalizacao_piso, 
-        bd_extintores.ficha_inspecao_trimestral,
-        bd_extintores.lacre, 
-        bd_extintores.pressao_manometro,
-        bd_extintores.anel_identificacao, 
-        bd_extintores.pesagem_co2_semestral
-    FROM 
+		COALESCE(bd_extintores.tip_extintor, '') AS tipo_extintor,
+        COALESCE(DATE_FORMAT(bd_extintores.inspecao_trimestral_nivel1, '%d-%m-%Y'), '') AS data_inspecao,
+        COALESCE(bd_extintores.selo_do_Inmetro, '') AS selo_do_Inmetro,
+        COALESCE(bd_extintores.sinalizacao_vertical, '') AS sinalizacao_vertical,
+        COALESCE(bd_extintores.sinalizacao_piso, '') AS sinalizacao_piso,
+        COALESCE(bd_extintores.ficha_inspecao_trimestral, '') AS ficha_inspecao_trimestral,
+        COALESCE(bd_extintores.lacre, '') AS lacre,
+        COALESCE(bd_extintores.pressao_manometro, '') AS pressao_manometro,
+        COALESCE(bd_extintores.anel_identificacao, '') AS anel_identificacao,
+        COALESCE(bd_extintores.pesagem_co2_semestral, '') AS pesagem_co2_semestral
+    FROM
         bd_extintores
-    LEFT JOIN 
+    LEFT JOIN
         usuarios ON bd_extintores.usuario = usuarios.id
-    WHERE 
+    WHERE
         bd_extintores.inspecao_trimestral_nivel1 = 'NÃO OK'
         OR bd_extintores.selo_do_Inmetro = 'NÃO OK'
 		OR bd_extintores.sinalizacao_vertical = 'NÃO OK'
@@ -113,26 +113,21 @@ $html = '<!DOCTYPE html>
                 <tbody>';
 
 while ($row = $result->fetch_assoc()) {
-    $row = array_map('htmlspecialchars', $row);
-	
-
-
-	
     $html .= '<tr>
-                <td>' . $row['extintor_codigo'] . '</td>
-                <td>' . $row['local_exato'] . '</td>
-                <td>' . $row['predio'] . '</td>
-                <td>' . $row['usuario_nome'] . '</td>
-				<td>' . $row['tipo_extintor'] . '</td>
-			    <td>' . $row['data_inspecao'] . '</td>
-                <td>' . $row['selo_do_Inmetro'] . '</td>
-                <td>' . $row['sinalizacao_vertical'] . '</td>
-                <td>' . $row['sinalizacao_piso'] . '</td>
-                <td>' . $row['ficha_inspecao_trimestral'] . '</td>
-                <td>' . $row['lacre'] . '</td>
-                <td>' . $row['pressao_manometro'] . '</td>
-				<td>' . $row['anel_identificacao'] . '</td>
-				<td>' . $row['pesagem_co2_semestral'] . '</td>
+                <td>' . htmlspecialchars($row['extintor_codigo']) . '</td>
+                <td>' . htmlspecialchars($row['local_exato']) . '</td>
+                <td>' . htmlspecialchars($row['predio']) . '</td>
+                <td>' . htmlspecialchars($row['usuario_nome']) . '</td>
+                <td>' . htmlspecialchars($row['tipo_extintor']) . '</td>
+                <td>' . htmlspecialchars($row['data_inspecao']) . '</td>
+                <td>' . htmlspecialchars($row['selo_do_Inmetro']) . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_vertical']) . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_piso']) . '</td>
+                <td>' . htmlspecialchars($row['ficha_inspecao_trimestral']) . '</td>
+                <td>' . htmlspecialchars($row['lacre']) . '</td>
+                <td>' . htmlspecialchars($row['pressao_manometro']) . '</td>
+                <td>' . htmlspecialchars($row['anel_identificacao']) . '</td>
+                <td>' . htmlspecialchars($row['pesagem_co2_semestral']) . '</td>
             </tr>';
 }
 

@@ -21,23 +21,23 @@ header('Content-Disposition: attachment; filename=historico_cobertura_' . date('
 
 // Construir consulta SQL
 $sql = "
-    SELECT 
-        bd_extintores.codigo, 
+    SELECT
+        bd_extintores.codigo,
         bd_extintores.Predio,
         bd_extintores.Local_Exato,
-        COALESCE(usuarios.username, 'Usuário removido') AS usuario_nome, 
+        COALESCE(usuarios.username, 'Usuário removido') AS usuario_nome,
         bd_extintores.tip_extintor,
-        bd_extintores.carga, 
+        bd_extintores.carga,
         bd_extintores.manutencao_n2,
-        bd_extintores.proxima_manutencao_n2, 
+        bd_extintores.proxima_manutencao_n2,
         bd_extintores.dias_para_expirar_n2,
         bd_extintores.cobertura
-    FROM 
+    FROM
         bd_extintores
-    LEFT JOIN 
+    LEFT JOIN
         usuarios ON bd_extintores.usuario = usuarios.id
-    WHERE 
-        bd_extintores.manutencao_n2 IS NOT NULL 
+    WHERE
+        bd_extintores.manutencao_n2 IS NOT NULL
         AND bd_extintores.cobertura >= '1'
 ";
 
@@ -96,18 +96,17 @@ $html = '<!DOCTYPE html>
                 <tbody>';
 
 while ($row = $result->fetch_assoc()) {
-    $row = array_map('htmlspecialchars', $row);
     $html .= '<tr>
-                <td>' . $row['codigo'] . '</td>
-                <td>' . $row['Predio'] . '</td>
-                <td>' . $row['Local_Exato'] . '</td>
-                <td>' . $row['usuario_nome'] . '</td>
-                <td>' . $row['tip_extintor'] . '</td>
-                <td>' . $row['carga'] . '</td>
-                <td>' . $row['manutencao_n2'] . '</td>
-                <td>' . $row['proxima_manutencao_n2'] . '</td>
-                <td>' . $row['dias_para_expirar_n2'] . '</td>
-                <td>' . $row['cobertura'] . '</td>
+                <td>' . htmlspecialchars($row['codigo'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['Predio'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['Local_Exato'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['usuario_nome'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['tip_extintor'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['carga'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['manutencao_n2'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['proxima_manutencao_n2'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['dias_para_expirar_n2'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['cobertura'] ?? '') . '</td>
             </tr>';
 }
 

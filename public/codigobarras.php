@@ -28,13 +28,15 @@ header('X-XSS-Protection: 1; mode=block');
 
 if (!$error_message) {
 // Consulta para obter as informações do extintor e o nome do usuário que fez a última inspeção de nível 1
-$sql = "
-    SELECT e.*,
-           e.usuario AS usuario_inspecao_nivel1,
-           e.usuario_n2 AS usuario_manutencao_nivel2
-    FROM bd_extintores e
-    WHERE e.codigo = ?
-    LIMIT 1";
+$result = null;
+if (empty($error_message)) {
+    $sql = "
+        SELECT e.*,
+               e.usuario AS usuario_inspecao_nivel1,
+               e.usuario_n2 AS usuario_manutencao_nivel2
+        FROM bd_extintores e
+        WHERE e.codigo = ?
+        LIMIT 1";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $codigo);

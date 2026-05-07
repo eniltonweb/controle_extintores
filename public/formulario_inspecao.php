@@ -24,7 +24,7 @@ if ($codigo) {
         exit();
     }
 
-    $sql = "SELECT * FROM bd_extintores WHERE codigo = ? LIMIT 1";
+    $sql = "SELECT Local_Exato, tip_extintor, comentarios FROM bd_extintores WHERE codigo = ? LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $codigo);
     $stmt->execute();

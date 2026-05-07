@@ -21,14 +21,13 @@ $predio_selecionado = filter_input(INPUT_GET, 'predio', FILTER_SANITIZE_STRING);
 $show_form = false;
 
 if ($codigo) {
-    $sql = "SELECT * FROM bd_extintores WHERE codigo = ? LIMIT 1";
+    $sql = "SELECT 1 FROM bd_extintores WHERE codigo = ? LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $codigo);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
         $show_form = true;
     } else {
         echo "<div class='warning'>Nenhum extintor encontrado com o código fornecido.</div>";
@@ -216,7 +215,7 @@ if ($codigo) {
                 <label for="codigo">Selecione o Extintor:</label>
                 <select id="codigo" name="codigo">
                     <?php
-                    $sql_extintores = "SELECT * FROM bd_extintores WHERE Predio = ?";
+                    $sql_extintores = "SELECT codigo, Atividade, Local_Exato FROM bd_extintores WHERE Predio = ?";
                     $stmt_extintores = $conn->prepare($sql_extintores);
                     $stmt_extintores->bind_param("s", $predio_selecionado);
                     $stmt_extintores->execute();

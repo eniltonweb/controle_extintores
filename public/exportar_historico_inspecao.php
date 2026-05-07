@@ -22,28 +22,28 @@ header('Content-Disposition: attachment; filename=historico_inspecao_' . date('Y
 
 // Construir consulta SQL (Adicionado a coluna bd_extintores.foto)
 $sql = "
-    SELECT 
-        bd_extintores.codigo AS extintor_codigo, 
+    SELECT
+        bd_extintores.codigo AS extintor_codigo,
         bd_extintores.Local_Exato AS local_exato,
         bd_extintores.Predio AS predio,
         COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome,
-		bd_extintores.tip_extintor AS tipo_extintor,		
+		bd_extintores.tip_extintor AS tipo_extintor,
         bd_extintores.inspecao_trimestral_nivel1 AS data_inspecao,
-        bd_extintores.selo_do_Inmetro, 
+        bd_extintores.selo_do_Inmetro,
         bd_extintores.sinalizacao_vertical,
-        bd_extintores.sinalizacao_piso, 
+        bd_extintores.sinalizacao_piso,
         bd_extintores.ficha_inspecao_trimestral,
-        bd_extintores.lacre, 
+        bd_extintores.lacre,
         bd_extintores.pressao_manometro,
-        bd_extintores.anel_identificacao, 
+        bd_extintores.anel_identificacao,
         bd_extintores.pesagem_co2_semestral,
         bd_extintores.foto AS foto_inspecao
-    FROM 
+    FROM
         bd_extintores
-    LEFT JOIN 
+    LEFT JOIN
         usuarios ON bd_extintores.usuario = usuarios.id
-    WHERE 
-        bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL 
+    WHERE
+        bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL
         AND bd_extintores.inspecao_trimestral_nivel1 >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
 ";
 
@@ -112,35 +112,33 @@ $html = '<!DOCTYPE html>
                 <tbody>';
 
 while ($row = $result->fetch_assoc()) {
-    $row = array_map('htmlspecialchars', $row);
-	
     // Formatando a data para d-m-Y
-    $row['data_inspecao'] = date_format(date_create($row['data_inspecao']), 'd-m-Y');
-	
+    $data_inspecao = htmlspecialchars(date_format(date_create($row['data_inspecao']), 'd-m-Y') ?? '');
+
     // Lógica para exibir a foto
     $foto_html = 'Sem Foto';
     if (!empty($row['foto_inspecao'])) {
-        $foto_url = 'http://www.enilton.com.br/uploads/' . $row['foto_inspecao'];
+        $foto_url = 'http://www.enilton.com.br/uploads/' . htmlspecialchars($row['foto_inspecao'] ?? '');
         $foto_html = '<a href="' . $foto_url . '" target="_blank">
                         <img src="' . $foto_url . '" style="max-width: 80px; max-height: 80px; border-radius: 4px; border: 1px solid #ccc;">
                       </a>';
     }
 
     $html .= '<tr>
-                <td>' . $row['extintor_codigo'] . '</td>
-                <td>' . $row['local_exato'] . '</td>
-                <td>' . $row['predio'] . '</td>
-                <td>' . $row['usuario_nome'] . '</td>
-				<td>' . $row['tipo_extintor'] . '</td>
-			    <td>' . $row['data_inspecao'] . '</td>
-                <td>' . $row['selo_do_Inmetro'] . '</td>
-                <td>' . $row['sinalizacao_vertical'] . '</td>
-                <td>' . $row['sinalizacao_piso'] . '</td>
-                <td>' . $row['ficha_inspecao_trimestral'] . '</td>
-                <td>' . $row['lacre'] . '</td>
-                <td>' . $row['pressao_manometro'] . '</td>
-				<td>' . $row['anel_identificacao'] . '</td>
-				<td>' . $row['pesagem_co2_semestral'] . '</td>
+                <td>' . htmlspecialchars($row['extintor_codigo'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['local_exato'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['predio'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['usuario_nome'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['tipo_extintor'] ?? '') . '</td>
+			    <td>' . $data_inspecao . '</td>
+                <td>' . htmlspecialchars($row['selo_do_Inmetro'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_vertical'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_piso'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['ficha_inspecao_trimestral'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['lacre'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['pressao_manometro'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['anel_identificacao'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['pesagem_co2_semestral'] ?? '') . '</td>
                 <td>' . $foto_html . '</td>
             </tr>';
 }

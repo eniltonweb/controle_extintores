@@ -24,6 +24,7 @@ require_once __DIR__ . '/../public/includes/functions.php';
 
 // Include test cases
 require_once __DIR__ . '/test_sanitize_input.php';
+require_once __DIR__ . '/test_verify_csrf_token.php';
 
 echo "\n\n";
 

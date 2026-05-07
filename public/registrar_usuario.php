@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Consultar todos os usuários registrados
 if (isset($_GET['action']) && $_GET['action'] == 'fetch_users') {
-    $sql = "SELECT * FROM usuarios";
+    $sql = "SELECT id, username, nivel_acesso FROM usuarios";
     $result = $conn->query($sql);
 
     $data = [];

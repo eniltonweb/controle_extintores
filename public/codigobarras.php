@@ -3,13 +3,18 @@ session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
 
+$error_message = null;
+$result = null;
+$codigo = null;
 if (!isset($_GET['codigo'])) {
-    die('Código de barras não fornecido.');
+    $error_message = 'Código de barras não fornecido.';
 }
 
-$codigo = htmlspecialchars($_GET['codigo']);
-if (!preg_match('/^[a-zA-Z0-9\-]+$/', $codigo)) {
-    die('Código inválido.');
+if (!$error_message) {
+    $codigo = htmlspecialchars($_GET['codigo']);
+    if (!preg_match('/^[a-zA-Z0-9\-]+$/', $codigo)) {
+        $error_message = 'Código inválido.';
+    }
 }
 
 $user_level = isset($_SESSION['user_level']) ? $_SESSION['user_level'] : null;
@@ -21,19 +26,23 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 
+if (!$error_message) {
 // Consulta para obter as informações do extintor e o nome do usuário que fez a última inspeção de nível 1
-$sql = "
-    SELECT e.*,
-           e.usuario AS usuario_inspecao_nivel1,
-           e.usuario_n2 AS usuario_manutencao_nivel2
-    FROM bd_extintores e
-    WHERE e.codigo = ?
-    LIMIT 1";
+$result = null;
+if (empty($error_message)) {
+    $sql = "
+        SELECT e.*,
+               e.usuario AS usuario_inspecao_nivel1,
+               e.usuario_n2 AS usuario_manutencao_nivel2
+        FROM bd_extintores e
+        WHERE e.codigo = ?
+        LIMIT 1";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $codigo);
 $stmt->execute();
 $result = $stmt->get_result();
+}
 
 ?>
 <!DOCTYPE html>
@@ -154,7 +163,9 @@ if ($user_level == 'admin') {
 ?>
 <div class="container mt-4">
 <?php
-if ($result) {
+if ($error_message) {
+    echo "<div class='alert alert-danger'>" . htmlspecialchars($error_message) . "</div>";
+} else if ($result) {
     if ($result->num_rows > 0) {
         $extintor = $result->fetch_assoc();
         ?>
@@ -227,8 +238,8 @@ if ($result) {
     } else {
         echo "<div class='alert alert-warning'>Nenhum extintor encontrado com o código fornecido.</div>";
     }
-} else {
-    echo "<div class='alert alert-danger'>Erro ao executar a consulta: " . $stmt->error . "</div>";
+} else if (!$error_message) {
+    echo "<div class='alert alert-danger'>Erro ao executar a consulta: " . ($stmt->error ?? 'Desconhecido') . "</div>";
 }
 
 $conn->close();

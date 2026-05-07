@@ -190,6 +190,12 @@ $conn->close();
         </div>
     <?php endif; ?>
 
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
+        </div>
+    <?php endif; ?>
+
     <form method="POST" action="registrar_usuario.php">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <div class="form-group">

@@ -3,12 +3,14 @@ session_start();
 include '../config/db_conexao.php';
 include 'auditoria.php';
 
-$error_message = '';
-$codigo = '';
-
+$error_message = null;
+$result = null;
+$codigo = null;
 if (!isset($_GET['codigo'])) {
     $error_message = 'Código de barras não fornecido.';
-} else {
+}
+
+if (!$error_message) {
     $codigo = htmlspecialchars($_GET['codigo']);
     if (!preg_match('/^[a-zA-Z0-9\-]+$/', $codigo)) {
         $error_message = 'Código inválido.';
@@ -24,6 +26,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 
+if (!$error_message) {
 // Consulta para obter as informações do extintor e o nome do usuário que fez a última inspeção de nível 1
 $result = null;
 if (empty($error_message)) {
@@ -35,10 +38,10 @@ if (empty($error_message)) {
         WHERE e.codigo = ?
         LIMIT 1";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $codigo);
-    $stmt->execute();
-    $result = $stmt->get_result();
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $codigo);
+$stmt->execute();
+$result = $stmt->get_result();
 }
 
 ?>
@@ -160,9 +163,9 @@ if ($user_level == 'admin') {
 ?>
 <div class="container mt-4">
 <?php
-if (!empty($error_message)) {
+if ($error_message) {
     echo "<div class='alert alert-danger'>" . htmlspecialchars($error_message) . "</div>";
-} elseif ($result) {
+} else if ($result) {
     if ($result->num_rows > 0) {
         $extintor = $result->fetch_assoc();
         ?>
@@ -235,8 +238,8 @@ if (!empty($error_message)) {
     } else {
         echo "<div class='alert alert-warning'>Nenhum extintor encontrado com o código fornecido.</div>";
     }
-} elseif (empty($error_message)) {
-    echo "<div class='alert alert-danger'>Erro ao executar a consulta: " . $stmt->error . "</div>";
+} else if (!$error_message) {
+    echo "<div class='alert alert-danger'>Erro ao executar a consulta: " . ($stmt->error ?? 'Desconhecido') . "</div>";
 }
 
 $conn->close();

@@ -216,7 +216,7 @@ if ($codigo) {
                 <label for="codigo">Selecione o Extintor:</label>
                 <select id="codigo" name="codigo">
                     <?php
-                    $sql_extintores = "SELECT * FROM bd_extintores WHERE Predio = ?";
+                    $sql_extintores = "SELECT codigo, Atividade, Local_Exato FROM bd_extintores WHERE Predio = ?";
                     $stmt_extintores = $conn->prepare($sql_extintores);
                     $stmt_extintores->bind_param("s", $predio_selecionado);
                     $stmt_extintores->execute();

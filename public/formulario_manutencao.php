@@ -196,11 +196,26 @@ if ($codigo) {
             <?php echo htmlspecialchars($_GET['message']); ?>
         </div>
     <?php endif; ?>
-    
+
     <?php if (!$codigo): ?>
-        <form method="GET" action="formulario_manutencao.php">
+        <?php
+        // Fetch all extintores for the liberated predios to avoid N+1 queries on the client
+        $sql_todos_extintores = "SELECT codigo, Predio, Atividade, Local_Exato FROM bd_extintores";
+        $result_todos = $conn->query($sql_todos_extintores);
+        $extintores_por_predio = [];
+        if ($result_todos) {
+            while ($row = $result_todos->fetch_assoc()) {
+                $extintores_por_predio[$row['Predio']][] = [
+                    'codigo' => $row['codigo'],
+                    'label' => $row['codigo'] . " - " . $row['Atividade'] . " - " . $row['Local_Exato']
+                ];
+            }
+        }
+        $extintores_json = json_encode($extintores_por_predio);
+        ?>
+        <form method="GET" action="formulario_manutencao.php" id="filtroForm">
             <label for="predio">Filtrar por Prédio:</label>
-            <select id="predio" name="predio" onchange="this.form.submit()">
+            <select id="predio" name="predio" onchange="updateExtintores()">
                 <option value="">Selecione o Prédio</option>
                 <?php while ($row = $result_liberados_manutencao->fetch_assoc()): ?>
                     <option value="<?php echo htmlspecialchars($row['Predio']); ?>" <?php echo ($predio_selecionado == $row['Predio']) ? 'selected' : ''; ?>>
@@ -208,28 +223,45 @@ if ($codigo) {
                     </option>
                 <?php endwhile; ?>
             </select>
-        </form>
 
-        <?php if ($predio_selecionado): ?>
-            <form method="GET" action="formulario_manutencao.php">
-                <input type="hidden" name="predio" value="<?php echo htmlspecialchars($predio_selecionado); ?>">
+            <div id="codigo_container" style="display: <?php echo $predio_selecionado ? 'block' : 'none'; ?>;">
                 <label for="codigo">Selecione o Extintor:</label>
                 <select id="codigo" name="codigo">
-                    <?php
-                    $sql_extintores = "SELECT * FROM bd_extintores WHERE Predio = ?";
-                    $stmt_extintores = $conn->prepare($sql_extintores);
-                    $stmt_extintores->bind_param("s", $predio_selecionado);
-                    $stmt_extintores->execute();
-                    $result_extintores = $stmt_extintores->get_result();
-                    while ($row = $result_extintores->fetch_assoc()): ?>
-                        <option value="<?php echo htmlspecialchars($row['codigo']); ?>">
-                            <?php echo htmlspecialchars($row['codigo'] . " - " . $row['Atividade'] . " - " . $row['Local_Exato']); ?>
-                        </option>
-                    <?php endwhile; ?>
+                    <!-- Options populated by JS -->
                 </select>
                 <button type="submit">Carregar Extintor</button>
-            </form>
-        <?php endif; ?>
+            </div>
+        </form>
+
+        <script>
+            const extintoresData = <?php echo $extintores_json; ?>;
+            const predioSelect = document.getElementById('predio');
+            const codigoSelect = document.getElementById('codigo');
+            const codigoContainer = document.getElementById('codigo_container');
+            const predioSelecionado = "<?php echo addslashes($predio_selecionado); ?>";
+
+            function updateExtintores() {
+                const selectedPredio = predioSelect.value;
+                codigoSelect.innerHTML = ''; // Clear options
+
+                if (selectedPredio && extintoresData[selectedPredio]) {
+                    extintoresData[selectedPredio].forEach(ext => {
+                        const option = document.createElement('option');
+                        option.value = ext.codigo;
+                        option.textContent = ext.label;
+                        codigoSelect.appendChild(option);
+                    });
+                    codigoContainer.style.display = 'block';
+                } else {
+                    codigoContainer.style.display = 'none';
+                }
+            }
+
+            // Populate on load if predio is already selected
+            if (predioSelecionado) {
+                updateExtintores();
+            }
+        </script>
     <?php endif; ?>
 
 <?php if ($show_form): ?>

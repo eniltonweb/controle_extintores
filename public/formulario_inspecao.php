@@ -229,6 +229,12 @@ if ($predio) {
             <?php echo htmlspecialchars($_GET['message']); ?>
         </div>
     <?php endif; ?>
+
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
+        </div>
+    <?php endif; ?>
 	
     <h2>Selecione um Prédio para Inspeção de Nível 1</h2>
     <form method="GET" action="formulario_inspecao.php">

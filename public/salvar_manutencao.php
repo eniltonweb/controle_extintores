@@ -8,7 +8,7 @@ include_once 'includes/auth.php';
 requirePermission('fornecedor');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_manutencao.php?message=Erro+de+valida%C3%A7%C3%A3o+CSRF.'); exit(); }
 }
 
 // Capturar dados do formulário

@@ -11,7 +11,7 @@ if (!isAuthenticated() || !in_array($_SESSION['user_level'], ['admin', 'forneced
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { $mensagem = "Erro de validação CSRF."; } else {
     // Inserir um novo extintor
     if (isset($_POST['inserir'])) {
         $codigo = filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mensagem = "Erro ao remover extintor: " . $stmt_remover->error;
         }
     }
+}
 }
 ?>
 

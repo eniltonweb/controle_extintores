@@ -7,7 +7,10 @@ include_once 'includes/auth.php';
 requirePermission('admin');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+        header("Location: liberar_manutencao.php?error=" . urlencode("Erro de validação CSRF."));
+        exit();
+    }
     $action = $_POST['action'];
     $tipo_liberacao = $_POST['tipo_liberacao'];
     $liberar_para = $_POST['liberar_para'];
@@ -212,6 +215,12 @@ $conn->close();
     <?php if (isset($message)) : ?>
         <div class="alert alert-info">
             <?php echo $message; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
         </div>
     <?php endif; ?>
 

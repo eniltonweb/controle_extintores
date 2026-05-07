@@ -37,7 +37,7 @@ if ($result) {
         // Verificar se o bombeiro tem permissão para inspeção de nível 1
         $liberado_inspecao = false;
         if ($user_level == 'bombeiro') {
-            $sql_inspecao = "SELECT * FROM liberacao_inspecao WHERE codigo_extintor = ? AND liberado_para = 'bombeiro'";
+            $sql_inspecao = "SELECT 1 FROM liberacao_inspecao WHERE codigo_extintor = ? AND liberado_para = 'bombeiro'";
             $stmt_inspecao = $conn->prepare($sql_inspecao);
             $stmt_inspecao->bind_param("s", $codigo);
             $stmt_inspecao->execute();

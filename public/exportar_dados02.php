@@ -22,10 +22,13 @@ $data_exportacao = date('Y-m-d_H-i-s');
 $nome_arquivo = "extintores_$data_exportacao.html";
 
 // Cabeçalhos HTTP para download do arquivo HTML
-header('Content-Type: text/html; charset=utf-8');
-header('Content-Disposition: attachment; filename=' . $nome_arquivo);
+// We will output PDF via dompdf
 
-// Início da exportação HTML
+require_once '../vendor/autoload.php';
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+ob_start();
 echo '<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -87,7 +90,7 @@ echo '<!DOCTYPE html>
 <body>
     <div class="container mt-3">
         <div class="header">
-            <img src="https://th.bing.com/th/id/R.ef057f57dcc9d793dba44afa229d81bb?rik=xhl9Y3NNxQmgQA&pid=ImgRaw&r=0" alt="Logo da Empresa">
+            <img src="' . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/') . '/img/michelin_logo.png' . '" alt="Logo da Empresa">
             <h2 class="mb-10">Relatório de Inspeção de Extintores</h2>
             <p class="text-muted">Gerado em: ' . date('Y-m-d H:i:s') . '</p>
         </div>';
@@ -176,6 +179,18 @@ echo '<div class="footer">
     </div>
 </body>
 </html>';
+
+$html = ob_get_clean();
+
+$options = new Options();
+$options->set('isRemoteEnabled', true);
+$dompdf = new Dompdf($options);
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'landscape');
+$dompdf->render();
+
+$nome_arquivo_pdf = str_replace('.html', '.pdf', $nome_arquivo);
+$dompdf->stream($nome_arquivo_pdf, array('Attachment' => true));
 
 // Registrar a auditoria
 $user_id = $_SESSION['user_id'];

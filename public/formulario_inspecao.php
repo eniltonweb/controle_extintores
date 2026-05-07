@@ -24,7 +24,7 @@ if ($codigo) {
         exit();
     }
 
-    $sql = "SELECT * FROM bd_extintores WHERE codigo = ? LIMIT 1";
+    $sql = "SELECT Local_Exato, tip_extintor, comentarios FROM bd_extintores WHERE codigo = ? LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $codigo);
     $stmt->execute();
@@ -227,6 +227,12 @@ if ($predio) {
     <?php if (isset($_GET['message'])) : ?>
         <div class="alert alert-success" role="alert">
             <?php echo htmlspecialchars($_GET['message']); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
         </div>
     <?php endif; ?>
 	

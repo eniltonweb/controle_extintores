@@ -22,28 +22,28 @@ header('Content-Disposition: attachment; filename=historico_inspecao_' . date('Y
 
 // Construir consulta SQL (Adicionado a coluna bd_extintores.foto)
 $sql = "
-    SELECT 
-        bd_extintores.codigo AS extintor_codigo, 
+    SELECT
+        bd_extintores.codigo AS extintor_codigo,
         bd_extintores.Local_Exato AS local_exato,
         bd_extintores.Predio AS predio,
         COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome,
-		bd_extintores.tip_extintor AS tipo_extintor,		
+		bd_extintores.tip_extintor AS tipo_extintor,
         bd_extintores.inspecao_trimestral_nivel1 AS data_inspecao,
-        bd_extintores.selo_do_Inmetro, 
+        bd_extintores.selo_do_Inmetro,
         bd_extintores.sinalizacao_vertical,
-        bd_extintores.sinalizacao_piso, 
+        bd_extintores.sinalizacao_piso,
         bd_extintores.ficha_inspecao_trimestral,
-        bd_extintores.lacre, 
+        bd_extintores.lacre,
         bd_extintores.pressao_manometro,
-        bd_extintores.anel_identificacao, 
+        bd_extintores.anel_identificacao,
         bd_extintores.pesagem_co2_semestral,
         bd_extintores.foto AS foto_inspecao
-    FROM 
+    FROM
         bd_extintores
-    LEFT JOIN 
+    LEFT JOIN
         usuarios ON bd_extintores.usuario = usuarios.id
-    WHERE 
-        bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL 
+    WHERE
+        bd_extintores.inspecao_trimestral_nivel1 IS NOT NULL
         AND bd_extintores.inspecao_trimestral_nivel1 >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
 ";
 

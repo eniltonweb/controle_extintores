@@ -196,6 +196,11 @@ if ($codigo) {
             <?php echo htmlspecialchars($_GET['message']); ?>
         </div>
     <?php endif; ?>
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
+        </div>
+    <?php endif; ?>
     
     <?php if (!$codigo): ?>
         <form method="GET" action="formulario_manutencao.php">

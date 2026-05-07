@@ -12,19 +12,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
-        die('Token de segurança inválido.');
+        header('Location: registrar_usuario.php?error=Token de segurança inválido.');
+        exit();
     }
 
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     if (!$id) {
-        die('ID do usuário não fornecido.');
+        header('Location: registrar_usuario.php?error=ID do usuário não fornecido.');
+        exit();
     }
 
     // Obter o nome do usuário antes de deletar
     $sql_user = "SELECT username FROM usuarios WHERE id = ?";
     $stmt_user = $conn->prepare($sql_user);
     if (!$stmt_user) {
-        echo "Erro ao preparar a consulta: " . $conn->error;
+        header('Location: registrar_usuario.php?error=Erro ao preparar a consulta: ' . urlencode($conn->error));
         exit();
     }
     $stmt_user->bind_param("i", $id);
@@ -39,12 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql_auditoria = "DELETE FROM auditoria_logs WHERE user_id = ?";
         $stmt_auditoria = $conn->prepare($sql_auditoria);
         if (!$stmt_auditoria) {
-            echo "Erro ao preparar a consulta de deleção de auditoria: " . $conn->error;
+            header('Location: registrar_usuario.php?error=Erro ao preparar a consulta de deleção de auditoria: ' . urlencode($conn->error));
             exit();
         }
         $stmt_auditoria->bind_param("i", $id);
         if (!$stmt_auditoria->execute()) {
-            echo "Erro ao deletar registros de auditoria: " . $stmt_auditoria->error;
+            header('Location: registrar_usuario.php?error=Erro ao deletar registros de auditoria: ' . urlencode($stmt_auditoria->error));
             exit();
         }
         $stmt_auditoria->close();
@@ -53,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "DELETE FROM usuarios WHERE id = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
-            echo "Erro ao preparar a consulta de deleção: " . $conn->error;
+            header('Location: registrar_usuario.php?error=Erro ao preparar a consulta de deleção: ' . urlencode($conn->error));
             exit();
         }
         $stmt->bind_param("i", $id);
@@ -63,12 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: registrar_usuario.php?message=Usuário deletado com sucesso');
             exit();
         } else {
-            echo "Erro ao deletar usuário: " . $stmt->error;
+            header('Location: registrar_usuario.php?error=Erro ao deletar usuário: ' . urlencode($stmt->error));
+            exit();
         }
 
         $stmt->close();
     } else {
-        echo "Usuário não encontrado.";
+        header('Location: registrar_usuario.php?error=Usuário não encontrado.');
+        exit();
     }
 
     $stmt_user->close();

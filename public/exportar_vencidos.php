@@ -85,16 +85,13 @@ $html = '<!DOCTYPE html>
 
 // Iterar sobre os resultados da consulta e preencher o HTML
 while ($row = $result->fetch_assoc()) {
-    // Proteger contra XSS
-    $row = array_map('htmlspecialchars', $row);
-
-    // Gerar as linhas da tabela
+    // Gerar as linhas da tabela protegendo contra XSS inline
     $html .= '<tr>
-                <td>' . $row['codigo'] . '</td>
-                <td>' . $row['Predio'] . '</td>
-                <td>' . $row['Local_Exato'] . '</td>
-                <td>' . $row['proxima_manutencao_n2'] . '</td>
-                <td>' . $row['dias_para_expirar_n2'] . '</td>
+                <td>' . htmlspecialchars($row['codigo'] ?? '', ENT_QUOTES, 'UTF-8') . '</td>
+                <td>' . htmlspecialchars($row['Predio'] ?? '', ENT_QUOTES, 'UTF-8') . '</td>
+                <td>' . htmlspecialchars($row['Local_Exato'] ?? '', ENT_QUOTES, 'UTF-8') . '</td>
+                <td>' . htmlspecialchars($row['proxima_manutencao_n2'] ?? '', ENT_QUOTES, 'UTF-8') . '</td>
+                <td>' . htmlspecialchars($row['dias_para_expirar_n2'] ?? '', ENT_QUOTES, 'UTF-8') . '</td>
             </tr>';
 }
 

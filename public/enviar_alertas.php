@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_level'] != 'admin') {
     exit();
 }
 
-$sql = "SELECT * FROM bd_extintores WHERE dias_para_expirar_n2 <= 30";
+$sql = "SELECT codigo, proxima_manutencao_n2 FROM bd_extintores WHERE dias_para_expirar_n2 <= 30";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {

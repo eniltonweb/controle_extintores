@@ -216,6 +216,12 @@ $conn->close();
         </div>
     <?php endif; ?>
 
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
+        </div>
+    <?php endif; ?>
+
     <form method="POST" action="liberar_manutencao.php">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
         <div class="form-group">

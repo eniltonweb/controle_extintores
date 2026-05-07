@@ -50,7 +50,7 @@ if ($result) {
         // Verificar se o fornecedor tem permissão para manutenção de nível 2
         $liberado_manutencao = false;
         if ($user_level == 'fornecedor') {
-            $sql_manutencao = "SELECT * FROM liberacao_manutencao WHERE codigo_extintor = ? AND liberado_para = 'fornecedor'";
+            $sql_manutencao = "SELECT 1 FROM liberacao_manutencao WHERE codigo_extintor = ? AND liberado_para = 'fornecedor'";
             $stmt_manutencao = $conn->prepare($sql_manutencao);
             $stmt_manutencao->bind_param("s", $codigo);
             $stmt_manutencao->execute();

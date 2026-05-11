@@ -112,9 +112,10 @@ $html = '<!DOCTYPE html>
                 <tbody>';
 
 while ($row = $result->fetch_assoc()) {
-    // Formatando a data para d-m-Y
-    $data_inspecao = htmlspecialchars(date_format(date_create($row['data_inspecao']), 'd-m-Y') ?? '');
 
+    // Formatando a data para d-m-Y
+    $row['data_inspecao'] = date_format(date_create($row['data_inspecao']), 'd-m-Y');
+	
     // Lógica para exibir a foto
     $foto_html = 'Sem Foto';
     if (!empty($row['foto_inspecao'])) {
@@ -130,7 +131,7 @@ while ($row = $result->fetch_assoc()) {
                 <td>' . htmlspecialchars($row['predio'] ?? '') . '</td>
                 <td>' . htmlspecialchars($row['usuario_nome'] ?? '') . '</td>
 				<td>' . htmlspecialchars($row['tipo_extintor'] ?? '') . '</td>
-			    <td>' . $data_inspecao . '</td>
+			    <td>' . htmlspecialchars($row['data_inspecao'] ?? '') . '</td>
                 <td>' . htmlspecialchars($row['selo_do_Inmetro'] ?? '') . '</td>
                 <td>' . htmlspecialchars($row['sinalizacao_vertical'] ?? '') . '</td>
                 <td>' . htmlspecialchars($row['sinalizacao_piso'] ?? '') . '</td>

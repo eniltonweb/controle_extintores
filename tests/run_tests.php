@@ -28,6 +28,7 @@ require_once __DIR__ . '/../public/includes/auth.php';
 require_once __DIR__ . '/test_sanitize_input.php';
 require_once __DIR__ . '/test_verify_csrf_token.php';
 require_once __DIR__ . '/test_is_authenticated.php';
+require_once __DIR__ . '/test_generate_password_reset_token.php';
 
 echo "\n\n";
 

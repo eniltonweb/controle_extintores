@@ -19,15 +19,15 @@ if ($result->num_rows > 0) {
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = 'smtp.example.com';
+            $mail->Host = getenv('SMTP_HOST') ?: 'smtp.example.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'seu_email@example.com';
-            $mail->Password = 'sua_senha';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = getenv('SMTP_USER') ?: 'seu_email@example.com';
+            $mail->Password = getenv('SMTP_PASS') ?: 'sua_senha';
+            $mail->SMTPSecure = getenv('SMTP_SECURE') ?: 'tls';
+            $mail->Port = (int)(getenv('SMTP_PORT') ?: 587);
 
-            $mail->setFrom('seu_email@example.com', 'Sistema de Manutenção');
-            $mail->addAddress('destinatario@example.com');
+            $mail->setFrom(getenv('SMTP_FROM_EMAIL') ?: 'seu_email@example.com', getenv('SMTP_FROM_NAME') ?: 'Sistema de Manutenção');
+            $mail->addAddress(getenv('SMTP_TO_EMAIL') ?: 'destinatario@example.com');
 
             $mail->isHTML(true);
             $mail->Subject = 'Alerta de Manutenção Pendente';

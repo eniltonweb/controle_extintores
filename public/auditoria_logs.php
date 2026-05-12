@@ -8,7 +8,9 @@ include_once 'includes/auth.php';
 requirePermission('admin');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+        $message = "Erro de validação CSRF.";
+    } else {
     if (isset($_POST['delete_selected'])) {
         if (!empty($_POST['logs'])) {
             // Evitar excluir o log que registra a ação de apagar todos os logs
@@ -40,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $message = "Erro ao apagar todos os logs: " . $conn->error;
         }
+    }
     }
 }
 

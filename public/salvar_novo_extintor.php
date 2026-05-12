@@ -14,7 +14,7 @@ requirePermission('bombeiro');
 
 // Verificar se o formulário foi submetido
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { die("Erro de validação CSRF."); }
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_inspecao.php?message=Erro:+Erro+de+validação+CSRF.'); exit(); }
     $novo_predio = filter_input(INPUT_POST, 'novo_predio', FILTER_SANITIZE_SPECIAL_CHARS);
     $novo_codigo = filter_input(INPUT_POST, 'novo_codigo', FILTER_SANITIZE_SPECIAL_CHARS);
     $novo_local = filter_input(INPUT_POST, 'novo_local', FILTER_SANITIZE_SPECIAL_CHARS);

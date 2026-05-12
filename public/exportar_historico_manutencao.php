@@ -21,7 +21,7 @@ $sql = "
             WHEN bd_extintores.usuario_n2 IS NULL OR bd_extintores.usuario_n2 = '' THEN 'Usuário removido'
             ELSE bd_extintores.usuario_n2
         END AS usuario_nome, 
-        bd_extintores.manutencao_n2 AS data_manutencao
+        DATE_FORMAT(bd_extintores.manutencao_n2, '%d/%m/%Y') AS data_manutencao
     FROM 
         bd_extintores
     WHERE 
@@ -98,7 +98,7 @@ if ($result->num_rows > 0) {
                 <td>{$row['predio']}</td>
                 <td>{$row['local_exato']}</td>
                 <td>{$row['usuario_nome']}</td>
-                <td>" . date('d/m/Y', strtotime($row['data_manutencao'])) . "</td>
+                <td>{$row['data_manutencao']}</td>
                 <td>{$cobertura}</td>
             </tr>
         ";

@@ -1,0 +1,29 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest --config jest.config.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eniltonweb/controle_extintores.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eniltonweb/controle_extintores/issues"
+  },
+  "homepage": "https://github.com/eniltonweb/controle_extintores#readme",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "jsdom": "^29.1.1"
+  }
+}

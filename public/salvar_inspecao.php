@@ -42,13 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pesagem_co2_semestral = filter_input(INPUT_POST, 'pesagem_co2_semestral', FILTER_SANITIZE_SPECIAL_CHARS);
     $comentarios = filter_input(INPUT_POST, 'comentarios', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     
-    // Lidar com o upload de fotos (Modificado para gerar nome único e evitar sobrescrita)
+        // Lidar com o upload de fotos (Modificado para gerar nome único e evitar sobrescrita)
     $foto_nome = null;
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-        $foto_nome = uniqid() . '_' . time() . '.' . $extensao; 
-        $foto_destino = "../uploads/" . $foto_nome;
-        move_uploaded_file($_FILES['foto']['tmp_name'], $foto_destino);
+        $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+        $permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $mime_type = mime_content_type($_FILES['foto']['tmp_name']);
+        $mime_permitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+        if (in_array($extensao, $permitidas) && in_array($mime_type, $mime_permitidos)) {
+            $foto_nome = uniqid() . '_' . time() . '.' . $extensao;
+            $foto_destino = "../uploads/" . $foto_nome;
+            move_uploaded_file($_FILES['foto']['tmp_name'], $foto_destino);
+        } else {
+            header('Location: formulario_inspecao.php?codigo=' . urlencode($codigo) . '&error=' . urlencode('Tipo de arquivo inválido. Apenas imagens são permitidas.'));
+            exit();
+        }
     }
 
     // Atualizar inspeção no banco de dados

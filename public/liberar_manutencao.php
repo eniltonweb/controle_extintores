@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
     }
 }
+}
 
 // Adicionar um endpoint para carregar os dados de liberação de forma assíncrona
 if (isset($_GET['action']) && $_GET['action'] == 'fetch_data') {
@@ -215,6 +216,12 @@ $conn->close();
     <?php if (isset($message)) : ?>
         <div class="alert alert-info">
             <?php echo $message; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])) : ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
         </div>
     <?php endif; ?>
 

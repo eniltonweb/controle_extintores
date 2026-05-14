@@ -8,6 +8,10 @@ include_once 'includes/auth.php';
 requirePermission('fornecedor');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_manutencao.php?message=Erro+de+valida%C3%A7%C3%A3o+CSRF.'); exit(); }
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_manutencao.php?message=Erro:+Erro+de+validação+CSRF.'); exit(); }
 }
 
@@ -18,7 +22,7 @@ $manutencao_n2 = isset($_POST['manutencao_n2']) && $_POST['manutencao_n2'] == '1
 
 // Garantir que o código não esteja vazio
 if (empty($codigo)) {
-    die("Erro: Código do extintor não especificado.");
+    header("Location: formulario_manutencao.php?error=" . urlencode("Erro: Código do extintor não especificado.")); exit();
 }
 
 // Capturar o nome do usuário logado a partir da sessão
@@ -26,7 +30,7 @@ $username = $_SESSION['user_name'] ?? null;
 
 // Verificar se o username foi recuperado corretamente
 if (empty($username)) {
-    die("Erro ao capturar o usuário logado.");
+    header("Location: formulario_manutencao.php?error=" . urlencode("Erro ao capturar o usuário logado.")); exit();
 }
 
 // Variável para armazenar mensagens de sucesso ou erro
@@ -46,7 +50,7 @@ if ($manutencao_n2) {
 
     // Verificar se a preparação da consulta foi bem-sucedida
     if ($stmt_manutencao === false) {
-        die("Erro ao preparar consulta para atualizar manutenção: " . $conn->error);
+        header("Location: formulario_manutencao.php?error=" . urlencode("Erro ao preparar consulta para atualizar manutenção: " . $conn->error)); exit();
     }
 
     $stmt_manutencao->bind_param("sssis", $data_manutencao_n2, $data_proxima_manutencao_n2, $username, $cobertura, $codigo);
@@ -72,7 +76,7 @@ if (!$manutencao_n2 && $cobertura) {
 
     // Verificar se a preparação da consulta foi bem-sucedida
     if ($stmt_cobertura === false) {
-        die("Erro ao preparar consulta para atualizar cobertura: " . $conn->error);
+        header("Location: formulario_manutencao.php?error=" . urlencode("Erro ao preparar consulta para atualizar cobertura: " . $conn->error)); exit();
     }
 
     $stmt_cobertura->bind_param("iss", $cobertura, $username, $codigo);
@@ -95,7 +99,7 @@ $sql_update_dias = "UPDATE bd_extintores
 $stmt_dias = $conn->prepare($sql_update_dias);
 
 if ($stmt_dias === false) {
-    die("Erro ao preparar consulta para atualizar dias para expirar: " . $conn->error);
+    header("Location: formulario_manutencao.php?error=" . urlencode("Erro ao preparar consulta para atualizar dias para expirar: " . $conn->error)); exit();
 }
 
 $stmt_dias->bind_param("s", $codigo);

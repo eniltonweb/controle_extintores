@@ -1,13 +1,28 @@
 {
-  "name": "controle-extintores-js-tests",
+  "name": "app",
   "version": "1.0.0",
-  "description": "Javascript tests for Controle de Extintores",
+  "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "jest"
+  "directories": {
+    "test": "tests"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:js": "node tests/test_app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eniltonweb/controle_extintores.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eniltonweb/controle_extintores/issues"
+  },
+  "homepage": "https://github.com/eniltonweb/controle_extintores#readme",
   "devDependencies": {
-    "jest": "^30.4.2",
-    "jest-environment-jsdom": "^30.4.1"
+    "jsdom": "^29.1.1"
   }
 }

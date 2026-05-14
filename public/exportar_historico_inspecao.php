@@ -28,7 +28,7 @@ $sql = "
         bd_extintores.Predio AS predio,
         COALESCE(bd_extintores.usuario, 'Usuário removido') AS usuario_nome,
 		bd_extintores.tip_extintor AS tipo_extintor,
-        bd_extintores.inspecao_trimestral_nivel1 AS data_inspecao,
+        DATE_FORMAT(bd_extintores.inspecao_trimestral_nivel1, '%d-%m-%Y') AS data_inspecao,
         bd_extintores.selo_do_Inmetro,
         bd_extintores.sinalizacao_vertical,
         bd_extintores.sinalizacao_piso,
@@ -113,7 +113,7 @@ $html = '<!DOCTYPE html>
 
 while ($row = $result->fetch_assoc()) {
     // Formatando a data para d-m-Y
-    $data_inspecao = htmlspecialchars(date_format(date_create($row['data_inspecao']), 'd-m-Y') ?? '');
+    $data_inspecao = htmlspecialchars($row['data_inspecao'] ?? '');
 
     // Lógica para exibir a foto
     $foto_html = 'Sem Foto';

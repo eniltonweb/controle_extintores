@@ -58,7 +58,7 @@ if (isset($_GET['id'])) {
         <h2 class="text-center">Resetar Senha</h2>
 
         <?php if (isset($message)) : ?>
-            <div class="alert alert-info text-center"><?php echo $message; ?></div>
+            <div class="alert alert-info text-center"><?php echo htmlspecialchars($message ?? ""); ?></div>
         <?php endif; ?>
 
         <form method="POST" action="resetar_senha.php" class="mb-4">

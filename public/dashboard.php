@@ -50,7 +50,7 @@ if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_ttl)) 
     ];
     // Ensure cache directory exists
     if (!is_dir('../cache')) {
-        mkdir('../cache', 0777, true);
+        mkdir('../cache', 0755, true);
     }
     file_put_contents($cache_file, json_encode($cache_data), LOCK_EX);
 }

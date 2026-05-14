@@ -113,26 +113,21 @@ $html = '<!DOCTYPE html>
                 <tbody>';
 
 while ($row = $result->fetch_assoc()) {
-    $row = array_map('htmlspecialchars', $row);
-	
-
-
-	
     $html .= '<tr>
-                <td>' . $row['extintor_codigo'] . '</td>
-                <td>' . $row['local_exato'] . '</td>
-                <td>' . $row['predio'] . '</td>
-                <td>' . $row['usuario_nome'] . '</td>
-				<td>' . $row['tipo_extintor'] . '</td>
-			    <td>' . $row['data_inspecao'] . '</td>
-                <td>' . $row['selo_do_Inmetro'] . '</td>
-                <td>' . $row['sinalizacao_vertical'] . '</td>
-                <td>' . $row['sinalizacao_piso'] . '</td>
-                <td>' . $row['ficha_inspecao_trimestral'] . '</td>
-                <td>' . $row['lacre'] . '</td>
-                <td>' . $row['pressao_manometro'] . '</td>
-				<td>' . $row['anel_identificacao'] . '</td>
-				<td>' . $row['pesagem_co2_semestral'] . '</td>
+                <td>' . htmlspecialchars($row['extintor_codigo'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['local_exato'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['predio'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['usuario_nome'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['tipo_extintor'] ?? '') . '</td>
+			    <td>' . htmlspecialchars($row['data_inspecao'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['selo_do_Inmetro'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_vertical'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['sinalizacao_piso'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['ficha_inspecao_trimestral'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['lacre'] ?? '') . '</td>
+                <td>' . htmlspecialchars($row['pressao_manometro'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['anel_identificacao'] ?? '') . '</td>
+				<td>' . htmlspecialchars($row['pesagem_co2_semestral'] ?? '') . '</td>
             </tr>';
 }
 

@@ -11,6 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_manutencao.php?message=Erro+de+valida%C3%A7%C3%A3o+CSRF.'); exit(); }
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) { header('Location: formulario_manutencao.php?message=Erro:+Erro+de+validação+CSRF.'); exit(); }
+}
+
 // Capturar dados do formulário
 $codigo = filter_input(INPUT_POST, 'codigo', FILTER_SANITIZE_STRING);
 $cobertura = isset($_POST['cobertura']) && $_POST['cobertura'] == '1' ? 1 : 0;
